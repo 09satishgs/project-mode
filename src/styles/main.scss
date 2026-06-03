@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+@import 'variables';
+@import 'mixins';
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  background-color: $color-bg;
+  color: $color-text-primary;
+  font-family: $font-family;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden; // Prevent overall page bounce/scrolling on mobile
+}
+
+body {
+  position: fixed; // Protect against iOS Safari elastic scrolling issues
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  overflow-y: auto; // Content within root can scroll if needed, but views will manage their own heights
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+// Global layout utility for centering the PWA view
+.app-container {
+  width: 100%;
+  max-width: $max-width-mobile;
+  height: 100%;
+  min-height: 100vh;
+  min-height: -webkit-fill-available; // Fix for mobile viewport height
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  border-left: 1px solid $color-border;
+  border-right: 1px solid $color-border;
+  background-color: $color-bg;
+  position: relative;
+
+  @media (max-width: #{$max-width-mobile}) {
+    border-left: none;
+    border-right: none;
+  }
+}
+
+// Fade in animations
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

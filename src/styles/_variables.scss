@@ -1,0 +1,41 @@
+// Minimalist Color Palette (Black, White, Gray, Red accents)
+$color-bg: #0a0a0a;
+$color-bg-card: #141414;
+$color-bg-card-hover: #1e1e1e;
+
+$color-text-primary: #ffffff;
+$color-text-secondary: #8a8a8a;
+$color-text-muted: #555555;
+
+$color-accent: #e53e3e; // Minimalist Red
+$color-accent-hover: #c53030;
+$color-accent-light: rgba(229, 62, 62, 0.1);
+
+$color-border: #262626;
+$color-border-light: #3a3a3a;
+
+$color-white: #ffffff;
+$color-black: #000000;
+
+// Grays
+$color-gray-900: #121212;
+$color-gray-800: #1a1a1a;
+$color-gray-700: #2d2d2d;
+$color-gray-600: #4a4a4a;
+$color-gray-500: #718096;
+
+// Swipe overlay accent colors
+$color-swipe-left-accent: #10b981;   // Green accent
+$color-swipe-right-accent: #e53e3e;  // Red accent
+
+// Layout sizes
+$max-width-mobile: 480px;
+$header-height: 56px;
+
+// Typography
+$font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+// Transitions & Shadows
+$transition-default: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+$shadow-card: 0 10px 30px rgba(0, 0, 0, 0.5);
+$shadow-card-drag: 0 20px 40px rgba(0, 0, 0, 0.8);

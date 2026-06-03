@@ -1,0 +1,113 @@
+@import 'variables';
+
+@mixin mobile-only {
+  @media (max-width: #{$max-width-mobile}) {
+    @content;
+  }
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin scrollbar-minimal {
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: $color-border;
+    border-radius: 3px;
+    &:hover {
+      background: $color-border-light;
+    }
+  }
+}
+
+@mixin card-base {
+  background: $color-bg-card;
+  border: 1px solid $color-border;
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: $transition-default;
+}
+
+@mixin input-text-base {
+  background: $color-bg;
+  border: 1px solid $color-border;
+  color: $color-text-primary;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-family: $font-family;
+  font-size: 1rem;
+  transition: $transition-default;
+  width: 100%;
+
+  &:focus {
+    outline: none;
+    border-color: $color-accent;
+  }
+
+  &::placeholder {
+    color: $color-text-muted;
+  }
+}
+
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-family: $font-family;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: $transition-default;
+  border: none;
+}
+
+@mixin button-primary {
+  @include button-base;
+  background: $color-accent;
+  color: $color-white;
+
+  &:hover {
+    background: $color-accent-hover;
+  }
+
+  &:disabled {
+    background: $color-border;
+    color: $color-text-muted;
+    cursor: not-allowed;
+  }
+}
+
+@mixin button-secondary {
+  @include button-base;
+  background: transparent;
+  color: $color-text-primary;
+  border: 1px solid $color-border;
+
+  &:hover {
+    background: $color-bg-card-hover;
+    border-color: $color-border-light;
+  }
+
+  &:disabled {
+    border-color: $color-border;
+    color: $color-text-muted;
+    cursor: not-allowed;
+  }
+}
