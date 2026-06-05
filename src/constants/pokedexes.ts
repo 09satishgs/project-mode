@@ -1,0 +1,246 @@
+export interface PokedexOption {
+  id: string;
+  name: string;
+  count: number;
+  type: "api" | "custom";
+  min?: number;
+  max?: number;
+}
+
+export const DEX_OPTIONS: PokedexOption[] = [
+  // Custom regional generation-based dexes (Pokemon only shown if they Debuted in that generation)
+  {
+    id: "kanto-national",
+    name: "Kanto Debut Dex (Gen 1)",
+    count: 151,
+    type: "custom",
+    min: 1,
+    max: 151,
+  },
+  {
+    id: "johto-national",
+    name: "Johto Debut Dex (Gen 2)",
+    count: 100,
+    type: "custom",
+    min: 152,
+    max: 251,
+  },
+  {
+    id: "hoenn-national",
+    name: "Hoenn Debut Dex (Gen 3)",
+    count: 135,
+    type: "custom",
+    min: 252,
+    max: 386,
+  },
+  {
+    id: "sinnoh-national",
+    name: "Sinnoh Debut Dex (Gen 4)",
+    count: 107,
+    type: "custom",
+    min: 387,
+    max: 493,
+  },
+  {
+    id: "unova-national",
+    name: "Unova Debut Dex (Gen 5)",
+    count: 156,
+    type: "custom",
+    min: 494,
+    max: 649,
+  },
+  {
+    id: "kalos-national",
+    name: "Kalos Debut Dex (Gen 6)",
+    count: 72,
+    type: "custom",
+    min: 650,
+    max: 721,
+  },
+  {
+    id: "alola-national",
+    name: "Alola Debut Dex (Gen 7)",
+    count: 88,
+    type: "custom",
+    min: 722,
+    max: 809,
+  },
+  {
+    id: "galar-national",
+    name: "Galar Debut Dex (Gen 8)",
+    count: 96,
+    type: "custom",
+    min: 810,
+    max: 905,
+  },
+  {
+    id: "paldea-national",
+    name: "Paldea Debut Dex (Gen 9)",
+    count: 120,
+    type: "custom",
+    min: 906,
+    max: 1025,
+  },
+
+  // API Pokedexes
+  {
+    id: "national",
+    name: "National Pokedex (All Species)",
+    count: 1025,
+    type: "api",
+  },
+  { id: "kanto", name: "Kanto (Red/Blue/Yellow)", count: 151, type: "api" },
+  {
+    id: "original-johto",
+    name: "Johto (Gold/Silver/Crystal)",
+    count: 251,
+    type: "api",
+  },
+  {
+    id: "hoenn",
+    name: "Hoenn (Ruby/Sapphire/Emerald)",
+    count: 202,
+    type: "api",
+  },
+  {
+    id: "original-sinnoh",
+    name: "Sinnoh (Diamond/Pearl)",
+    count: 151,
+    type: "api",
+  },
+  { id: "extended-sinnoh", name: "Sinnoh (Platinum)", count: 210, type: "api" },
+  {
+    id: "updated-johto",
+    name: "Johto (HeartGold/SoulSilver)",
+    count: 256,
+    type: "api",
+  },
+  {
+    id: "original-unova",
+    name: "Unova (Black/White)",
+    count: 156,
+    type: "api",
+  },
+  {
+    id: "updated-unova",
+    name: "Unova (Black 2/White 2)",
+    count: 301,
+    type: "api",
+  },
+  {
+    id: "conquest-gallery",
+    name: "Ransei Gallery (Conquest)",
+    count: 200,
+    type: "api",
+  },
+  { id: "kalos-central", name: "Kalos Central (X/Y)", count: 150, type: "api" },
+  { id: "kalos-coastal", name: "Kalos Coastal (X/Y)", count: 153, type: "api" },
+  {
+    id: "kalos-mountain",
+    name: "Kalos Mountain (X/Y)",
+    count: 151,
+    type: "api",
+  },
+  {
+    id: "updated-hoenn",
+    name: "Hoenn (Omega Ruby/Alpha Sapphire)",
+    count: 211,
+    type: "api",
+  },
+  { id: "original-alola", name: "Alola (Sun/Moon)", count: 302, type: "api" },
+  {
+    id: "original-melemele",
+    name: "Alola Melemele (Sun/Moon)",
+    count: 120,
+    type: "api",
+  },
+  {
+    id: "original-akala",
+    name: "Alola Akala (Sun/Moon)",
+    count: 130,
+    type: "api",
+  },
+  {
+    id: "original-ulaula",
+    name: "Alola Ula'ula (Sun/Moon)",
+    count: 130,
+    type: "api",
+  },
+  {
+    id: "original-poni",
+    name: "Alola Poni (Sun/Moon)",
+    count: 100,
+    type: "api",
+  },
+  {
+    id: "updated-alola",
+    name: "Alola (Ultra Sun/Ultra Moon)",
+    count: 403,
+    type: "api",
+  },
+  {
+    id: "updated-melemele",
+    name: "Alola Melemele (Ultra Sun/Ultra Moon)",
+    count: 150,
+    type: "api",
+  },
+  {
+    id: "updated-akala",
+    name: "Alola Akala (Ultra Sun/Ultra Moon)",
+    count: 160,
+    type: "api",
+  },
+  {
+    id: "updated-ulaula",
+    name: "Alola Ula'ula (Ultra Sun/Ultra Moon)",
+    count: 160,
+    type: "api",
+  },
+  {
+    id: "updated-poni",
+    name: "Alola Poni (Ultra Sun/Ultra Moon)",
+    count: 130,
+    type: "api",
+  },
+  {
+    id: "letsgo-kanto",
+    name: "Kanto (Let's Go Pikachu/Eevee)",
+    count: 153,
+    type: "api",
+  },
+  { id: "galar", name: "Galar (Sword/Shield)", count: 400, type: "api" },
+  {
+    id: "isle-of-armor",
+    name: "Galar Isle of Armor (Sword/Shield DLC)",
+    count: 211,
+    type: "api",
+  },
+  {
+    id: "crown-tundra",
+    name: "Galar Crown Tundra (Sword/Shield DLC)",
+    count: 210,
+    type: "api",
+  },
+  { id: "hisui", name: "Hisui (Legends: Arceus)", count: 242, type: "api" },
+  { id: "paldea", name: "Paldea (Scarlet/Violet)", count: 400, type: "api" },
+  {
+    id: "kitakami",
+    name: "Kitakami (Scarlet/Violet DLC)",
+    count: 200,
+    type: "api",
+  },
+  {
+    id: "blueberry",
+    name: "Blueberry Academy (Scarlet/Violet DLC)",
+    count: 243,
+    type: "api",
+  },
+  {
+    id: "lumiose-city",
+    name: "Lumiose City (Legends: Z-A)",
+    count: 232,
+    type: "api",
+  },
+  { id: "hyperspace", name: "Hyperspace Dex", count: 132, type: "api" },
+  { id: "champions", name: "Champions Dex", count: 184, type: "api" },
+];
