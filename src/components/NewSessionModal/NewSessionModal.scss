@@ -1,0 +1,255 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  @include flex-center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: $color-bg-card;
+  border: 1px solid $color-border;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: $shadow-card;
+  animation: modalEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: 90vh;
+  @include scrollbar-minimal;
+
+  @include mobile-only {
+    max-width: 100%;
+    border-radius: 20px 20px 0 0;
+    position: absolute;
+    bottom: 0;
+    animation: modalDrawerEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    max-height: 92vh;
+  }
+}
+
+.modal-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid $color-border;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: $color-text-primary;
+  }
+
+  .close-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.75rem;
+    color: $color-text-secondary;
+    cursor: pointer;
+    line-height: 1;
+    transition: $transition-default;
+
+    &:hover {
+      color: $color-accent;
+    }
+  }
+}
+
+.modal-form {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  .form-error {
+    background: rgba($color-accent, 0.1);
+    border: 1px solid rgba($color-accent, 0.3);
+    color: $color-accent;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    animation: shake 0.3s ease-in-out;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: $color-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+  }
+
+  input[type="text"] {
+    @include input-text-base;
+  }
+
+  select {
+    @include input-text-base;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a8a8a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.2em;
+    padding-right: 2.5rem;
+    cursor: pointer;
+
+    option {
+      background: $color-bg-card;
+      color: $color-text-primary;
+    }
+  }
+}
+
+.label-with-color {
+  display: flex;
+  align-items: center;
+}
+
+// Color square blocks
+.color-block {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-left: 6px;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  &.green {
+    background-color: $color-swipe-left-accent;
+  }
+
+  &.red {
+    background-color: $color-swipe-right-accent;
+  }
+}
+
+// Gesture toggle checkbox styling
+.gesture-toggle {
+  margin: 0.25rem 0;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  color: $color-text-primary;
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+
+  input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: $color-accent;
+    cursor: pointer;
+  }
+}
+
+// Custom Gestures Input Group styling
+.custom-gestures-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.25rem;
+  background: rgba($color-black, 0.2);
+  border: 1px dashed $color-border;
+  border-radius: 12px;
+  animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.modal-actions {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 1rem;
+  margin-top: 0.75rem;
+
+  .btn-primary {
+    @include button-primary;
+  }
+
+  .btn-secondary {
+    @include button-secondary;
+  }
+}
+
+// Spinner for loading state
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba($color-white, 0.3);
+  border-radius: 50%;
+  border-top-color: $color-white;
+  animation: spin 0.8s linear infinite;
+  margin-right: 0.5rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes modalDrawerEnter {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}

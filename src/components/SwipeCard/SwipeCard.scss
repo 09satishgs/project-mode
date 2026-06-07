@@ -1,0 +1,135 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.swipe-card {
+  position: absolute;
+  width: 100%;
+  max-width: 320px;
+  height: 440px;
+  background-color: $color-bg-card;
+  border: 1px solid $color-border;
+  border-radius: 20px;
+  overflow: hidden;
+  user-select: none;
+  touch-action: none; // Disable browser touch handling for gestures
+
+  &.active {
+    cursor: grab;
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  &.inactive {
+    pointer-events: none;
+  }
+}
+
+.card-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+}
+
+.sprite-container {
+  flex-grow: 1;
+  width: 100%;
+  @include flex-center;
+  position: relative;
+  background: radial-gradient(circle, rgba($color-white, 0.03) 0%, rgba($color-white, 0) 70%);
+  margin-bottom: 1.5rem;
+  min-height: 220px;
+
+  img {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.4));
+    -webkit-user-drag: none;
+  }
+
+  .sprite-skeleton {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, $color-border 25%, $color-border-light 50%, $color-border 75%);
+    background-size: 200% 100%;
+    animation: loading-pulse 1.5s infinite linear;
+  }
+}
+
+.card-info {
+  text-align: center;
+  border-top: 1px solid rgba($color-border, 0.5);
+  padding-top: 1rem;
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: $color-text-primary;
+    margin-bottom: 0.25rem;
+  }
+
+  p {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: $color-text-secondary;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+}
+
+// Swipe indicator stamps
+.swipe-indicator {
+  position: absolute;
+  font-size: 1.15rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  border: 3px solid;
+  z-index: 100;
+  pointer-events: none;
+  white-space: nowrap;
+
+  &.left-indicator {
+    top: 2rem;
+    right: 2rem;
+    color: $color-swipe-left-accent;
+    border-color: $color-swipe-left-accent;
+    transform: rotate(15deg);
+  }
+
+  &.right-indicator {
+    top: 2rem;
+    left: 2rem;
+    color: $color-swipe-right-accent;
+    border-color: $color-swipe-right-accent;
+    transform: rotate(-15deg);
+  }
+
+  &.up-indicator {
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%) rotate(-5deg);
+    color: #ffffff;
+    border-color: #ffffff;
+  }
+
+  &.down-indicator {
+    bottom: 6rem;
+    left: 50%;
+    transform: translateX(-50%) rotate(5deg);
+    color: $color-text-secondary;
+    border-color: $color-text-secondary;
+  }
+}
+
+@keyframes loading-pulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
