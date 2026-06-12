@@ -1,0 +1,95 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.json-tree-node, .json-tree-line {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: $color-text-primary;
+}
+
+.json-tree-node {
+  margin: 0.15rem 0;
+}
+
+.json-node-header {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.1rem 0.25rem;
+  border-radius: 4px;
+  user-select: none;
+  width: fit-content;
+
+  &:hover {
+    background: rgba($color-white, 0.04);
+  }
+
+  .toggle-icon {
+    display: inline-block;
+    width: 14px;
+    font-size: 0.65rem;
+    color: $color-text-secondary;
+    margin-right: 0.25rem;
+  }
+}
+
+.json-node-children {
+  margin-left: 0.75rem;
+  padding-left: 0.75rem;
+  border-left: 1px solid $color-border;
+  display: flex;
+  flex-direction: column;
+}
+
+.json-node-footer {
+  padding-left: 14px; // Align with header bracket
+  color: $color-text-secondary;
+}
+
+.json-tree-line {
+  padding-left: 14px; // Match header alignment
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+// Minimalist Color Coding
+.json-key {
+  color: $color-text-primary;
+  font-weight: 600;
+}
+
+.json-comma, .json-bracket {
+  color: $color-text-secondary;
+}
+
+.json-collapsed-text {
+  color: $color-text-muted;
+  background: rgba($color-white, 0.03);
+  border: 1px solid $color-border;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  padding: 0 0.25rem;
+  margin: 0 0.25rem;
+}
+
+.json-val {
+  &.string {
+    color: #e2e8f0; // Soft white/gray for strings
+  }
+
+  &.number {
+    color: $color-accent; // Red accent for numbers
+  }
+
+  &.boolean {
+    color: $color-accent; // Red accent for booleans
+    font-weight: bold;
+  }
+
+  &.null {
+    color: $color-text-muted;
+    font-style: italic;
+  }
+}
