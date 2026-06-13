@@ -200,7 +200,7 @@ The spreadsheet dynamically filters down to show you only the Pokémon that are 
 | **Advanced Query blocks** | Intersects, unites, or subtracts custom conditions (e.g. `stats.speed > 100`). | Visual Query Builder + Local Set Math |
 | **Column Sorting** | Click headers to sort by Name, ID, Primary type, or timestamp ascending/descending. | Lodash-style Array Sorters |
 | **Collapsible JSON Tree** | Fully inspect nested Pokemon API JSON structures recursively with type highlighting. | Collapsible Node Renderer |
-| **Intersection Observer** | Renders rows lazily in batches of 50 for rapid scroll updates. | Callback Sentinel Ref |
+| **Lazy Rendering (Infinite Scroll)** | Renders spreadsheet rows dynamically in batches of 50 as you scroll to prevent mobile viewport lag. | React Callback Ref + IntersectionObserver Sentinel |
 
 ---
 
@@ -235,6 +235,14 @@ const joinedRecords = actions.map(act => {
 });
 ```
 This maps raw directions (left, right, etc.) to user-defined session titles on-the-fly, allowing a single view to display combined stats.
+
+### 4. Lazy Rendering (Infinite Scroll) for Viewport Optimization
+To support smooth scrolling on low-end mobile devices when joining massive Pokedex lists, M.O.D.E. implements dynamic lazy rendering (commonly known as **infinite scrolling**):
+- **Pagination Chunking:** The analysis spreadsheet initializes with a slice of the first 50 matched Pokémon.
+- **Sentinel Intersection Observation:** A bottom-aligned placeholder element acts as a scroll sentinel. An `IntersectionObserver` detects when this sentinel enters the visible viewport.
+- **Dynamic Sentinel Binding:** To avoid stale closure reference issues when applying custom filter sets or query parameters, a React callback ref (`sentinelRef`) is utilized to disconnect and reconnect the observer dynamically to the correct sentinel node.
+- **On-Demand Hydration:** When the sentinel is intersected, the visible slice count increments by 50 rows, rendering new data on-demand and keeping the browser's DOM weight minimal.
+
 
 ---
 
