@@ -11,6 +11,10 @@
   <strong>Separated View-Hook Architecture</strong>
 </p>
 
+<p align="center">
+  <strong>Live URL:</strong> <a href="https://projects.satish.com/project-mode">projects.satish.com/project-mode</a>
+</p>
+
 ---
 
 ## Table of Contents
