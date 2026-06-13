@@ -62,6 +62,7 @@ export const Analyse: React.FC = () => {
 
   // Expanded row tracking (Map of row ID -> boolean)
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
+  const [viewMode, setViewMode] = useState<"table" | "list">("table");
 
   const [loading, setLoading] = useState(true);
 
@@ -337,7 +338,7 @@ export const Analyse: React.FC = () => {
   };
 
   // Calculate matching counts and records for the Visual Query Builder
-  const calculateQueryBuilder = async () => {
+  const calculateQueryBuilder = useCallback(async () => {
     try {
       const sessionMap = new Map(completedSessions.map((s) => [s.id, s]));
       const blockRecordsMap: Record<string, JoinedRecord[]> = {};
@@ -421,14 +422,14 @@ export const Analyse: React.FC = () => {
     } catch (err) {
       console.error("Failed to calculate query builder matches:", err);
     }
-  };
+  }, [completedSessions, queryBlocks, queryRelations]);
 
   // Re-calculate block counts whenever builder state or completed sessions change
   useEffect(() => {
     if (completedSessions.length > 0) {
       calculateQueryBuilder();
     }
-  }, [queryBlocks, queryRelations, completedSessions]);
+  }, [calculateQueryBuilder, completedSessions]);
 
   // Hydrate query builder from URL parameter
   useEffect(() => {
@@ -675,9 +676,9 @@ export const Analyse: React.FC = () => {
 
   const filtered = getFilteredRecords();
 
-  // Callback ref for lazy loading table rows via IntersectionObserver
+  // Callback ref for lazy loading table rows/list cards via IntersectionObserver
   const sentinelRef = useCallback(
-    (node: HTMLTableRowElement | null) => {
+    (node: HTMLElement | null) => {
       if (observerRef.current) {
         observerRef.current.disconnect();
         observerRef.current = null;
@@ -887,6 +888,54 @@ export const Analyse: React.FC = () => {
                 </span>
 
                 <div className="table-actions-group">
+                  {/* View Mode Toggle */}
+                  <button
+                    className="btn-secondary view-toggle-btn"
+                    onClick={() =>
+                      setViewMode(viewMode === "table" ? "list" : "table")
+                    }
+                    aria-label={
+                      viewMode === "table"
+                        ? "Switch to List View"
+                        : "Switch to Table View"
+                    }
+                  >
+                    {viewMode === "table" ? (
+                      <>
+                        <svg
+                          viewBox="0 0 24 24"
+                          width="16"
+                          height="16"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          style={{ marginRight: "6px" }}
+                        >
+                          <rect x="3" y="3" width="7" height="9" />
+                          <rect x="14" y="3" width="7" height="5" />
+                          <rect x="14" y="12" width="7" height="9" />
+                          <rect x="3" y="16" width="7" height="5" />
+                        </svg>
+                        Cards
+                      </>
+                    ) : (
+                      <>
+                        <svg
+                          viewBox="0 0 24 24"
+                          width="16"
+                          height="16"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          style={{ marginRight: "6px" }}
+                        >
+                          <path d="M3 3h18v18H3zM21 9H3M21 15H3M12 3v18" />
+                        </svg>
+                        Table
+                      </>
+                    )}
+                  </button>
+
                   {/* Columns Select Dropdown */}
                   <div className="column-selector-wrapper">
                     <button
@@ -959,189 +1008,316 @@ export const Analyse: React.FC = () => {
                       <polyline points="7 10 12 15 17 10" />
                       <line x1="12" y1="15" x2="12" y2="3" />
                     </svg>
-                    Export JSON
+                    Export
                   </button>
                 </div>
               </div>
 
-              <div className="spreadsheet-container">
-                <table className="spreadsheet">
-                  <thead>
-                    <tr>
-                      <th
-                        style={{
-                          width: "40px",
-                          padding: "0.75rem 0.5rem",
-                          textAlign: "center",
-                        }}
-                      ></th>
-                      {visibleColumns.snapshot && <th>Snapshot</th>}
-                      {visibleColumns.cardId && (
+              {viewMode === "table" ? (
+                <div className="spreadsheet-container">
+                  <table className="spreadsheet">
+                    <thead>
+                      <tr>
                         <th
-                          className="sortable"
-                          onClick={() => handleSort("cardId")}
-                        >
-                          ID{" "}
-                          {sortField === "cardId"
-                            ? sortOrder === "asc"
-                              ? "▲"
-                              : "▼"
-                            : ""}
-                        </th>
-                      )}
-                      {visibleColumns.name && (
-                        <th
-                          className="sortable"
-                          onClick={() => handleSort("name")}
-                        >
-                          Name{" "}
-                          {sortField === "name"
-                            ? sortOrder === "asc"
-                              ? "▲"
-                              : "▼"
-                            : ""}
-                        </th>
-                      )}
-                      {visibleColumns.label && (
-                        <th
-                          className="sortable"
-                          onClick={() => handleSort("label")}
-                        >
-                          Categorization{" "}
-                          {sortField === "label"
-                            ? sortOrder === "asc"
-                              ? "▲"
-                              : "▼"
-                            : ""}
-                        </th>
-                      )}
-                      {visibleColumns.timestamp && (
-                        <th
-                          className="sortable"
-                          onClick={() => handleSort("timestamp")}
-                        >
-                          Time{" "}
-                          {sortField === "timestamp"
-                            ? sortOrder === "asc"
-                              ? "▲"
-                              : "▼"
-                            : ""}
-                        </th>
-                      )}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filtered.slice(0, visibleCount).map((record) => {
-                      const isRowExpanded = !!expandedRows[record.id];
-                      return (
-                        <React.Fragment key={record.id}>
-                          {/* Main Row */}
-                          <tr
-                            className={`data-row ${isRowExpanded ? "expanded-row-active" : ""}`}
-                          >
-                            <td
-                              style={{
-                                textAlign: "center",
-                                width: "40px",
-                                padding: "0.5rem",
-                              }}
-                            >
-                              <button
-                                className="expand-toggle-btn"
-                                onClick={() => toggleRowExpanded(record.id)}
-                                aria-label={
-                                  isRowExpanded
-                                    ? "Collapse details"
-                                    : "Expand details"
-                                }
-                              >
-                                <svg
-                                  viewBox="0 0 24 24"
-                                  width="16"
-                                  height="16"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="2.5"
-                                  className={`chevron-icon ${isRowExpanded ? "expanded" : ""}`}
-                                >
-                                  <polyline points="6 9 12 15 18 9" />
-                                </svg>
-                              </button>
-                            </td>
-                            {visibleColumns.snapshot && (
-                              <td className="truncate-cell">
-                                {record.sessionTitle}
-                              </td>
-                            )}
-                            {visibleColumns.cardId && (
-                              <td>#{record.cardId.padStart(3, "0")}</td>
-                            )}
-                            {visibleColumns.name && (
-                              <td>
-                                <strong>{record.name}</strong>
-                              </td>
-                            )}
-                            {visibleColumns.label && (
-                              <td onClick={(e) => e.stopPropagation()}>
-                                <select
-                                  value={record.direction}
-                                  onChange={(e) =>
-                                    handleCategorizationChange(
-                                      record,
-                                      e.target.value,
-                                    )
-                                  }
-                                  className={`badge-label-select ${record.direction}`}
-                                >
-                                  {getSessionOptions(record.sessionId).map(
-                                    (opt) => (
-                                      <option key={opt.value} value={opt.value}>
-                                        {opt.label}
-                                      </option>
-                                    ),
-                                  )}
-                                </select>
-                              </td>
-                            )}
-                            {visibleColumns.timestamp && (
-                              <td>{formatDate(record.timestamp)}</td>
-                            )}
-                          </tr>
-
-                          {/* Expanded Nested JSON Row */}
-                          {isRowExpanded && (
-                            <tr className="expanded-row">
-                              <td colSpan={visibleColumnsCount + 1}>
-                                <div className="json-container">
-                                  <h4>Raw Card Data</h4>
-                                  <div className="json-tree-wrapper">
-                                    <JsonTreeView data={record.details} />
-                                  </div>
-                                </div>
-                              </td>
-                            </tr>
-                          )}
-                        </React.Fragment>
-                      );
-                    })}
-                    {filtered.length > visibleCount && (
-                      <tr ref={sentinelRef} className="lazy-sentinel-row">
-                        <td
-                          colSpan={visibleColumnsCount + 1}
                           style={{
+                            width: "40px",
+                            padding: "0.75rem 0.5rem",
                             textAlign: "center",
-                            padding: "1.25rem",
-                            color: "#8a8a8a",
-                            fontSize: "0.85rem",
                           }}
-                        >
-                          Loading more entries...
-                        </td>
+                        ></th>
+                        {visibleColumns.snapshot && <th>Snapshot</th>}
+                        {visibleColumns.cardId && (
+                          <th
+                            className="sortable"
+                            onClick={() => handleSort("cardId")}
+                          >
+                            ID{" "}
+                            {sortField === "cardId"
+                              ? sortOrder === "asc"
+                                ? "▲"
+                                : "▼"
+                              : ""}
+                          </th>
+                        )}
+                        {visibleColumns.name && (
+                          <th
+                            className="sortable"
+                            onClick={() => handleSort("name")}
+                          >
+                            Name{" "}
+                            {sortField === "name"
+                              ? sortOrder === "asc"
+                                ? "▲"
+                                : "▼"
+                              : ""}
+                          </th>
+                        )}
+                        {visibleColumns.label && (
+                          <th
+                            className="sortable"
+                            onClick={() => handleSort("label")}
+                          >
+                            Categorization{" "}
+                            {sortField === "label"
+                              ? sortOrder === "asc"
+                                ? "▲"
+                                : "▼"
+                              : ""}
+                          </th>
+                        )}
+                        {visibleColumns.timestamp && (
+                          <th
+                            className="sortable"
+                            onClick={() => handleSort("timestamp")}
+                          >
+                            Time{" "}
+                            {sortField === "timestamp"
+                              ? sortOrder === "asc"
+                                ? "▲"
+                                : "▼"
+                              : ""}
+                          </th>
+                        )}
                       </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {filtered.slice(0, visibleCount).map((record) => {
+                        const isRowExpanded = !!expandedRows[record.id];
+                        return (
+                          <React.Fragment key={record.id}>
+                            {/* Main Row */}
+                            <tr
+                              className={`data-row ${isRowExpanded ? "expanded-row-active" : ""}`}
+                            >
+                              <td
+                                style={{
+                                  textAlign: "center",
+                                  width: "40px",
+                                  padding: "0.5rem",
+                                }}
+                              >
+                                <button
+                                  className="expand-toggle-btn"
+                                  onClick={() => toggleRowExpanded(record.id)}
+                                  aria-label={
+                                    isRowExpanded
+                                      ? "Collapse details"
+                                      : "Expand details"
+                                  }
+                                >
+                                  <svg
+                                    viewBox="0 0 24 24"
+                                    width="16"
+                                    height="16"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2.5"
+                                    className={`chevron-icon ${isRowExpanded ? "expanded" : ""}`}
+                                  >
+                                    <polyline points="6 9 12 15 18 9" />
+                                  </svg>
+                                </button>
+                              </td>
+                              {visibleColumns.snapshot && (
+                                <td className="truncate-cell">
+                                  {record.sessionTitle}
+                                </td>
+                              )}
+                              {visibleColumns.cardId && (
+                                <td>#{record.cardId.padStart(3, "0")}</td>
+                              )}
+                              {visibleColumns.name && (
+                                <td className="name-cell">
+                                  <div className="name-cell-content">
+                                    {record.details?.imageUrl && (
+                                      <img
+                                        src={record.details.imageUrl}
+                                        alt=""
+                                        className="pokemon-mini-sprite"
+                                        loading="lazy"
+                                      />
+                                    )}
+                                    <strong>{record.name}</strong>
+                                  </div>
+                                </td>
+                              )}
+                              {visibleColumns.label && (
+                                <td onClick={(e) => e.stopPropagation()}>
+                                  <select
+                                    value={record.direction}
+                                    onChange={(e) =>
+                                      handleCategorizationChange(
+                                        record,
+                                        e.target.value,
+                                      )
+                                    }
+                                    className={`badge-label-select ${record.direction}`}
+                                  >
+                                    {getSessionOptions(record.sessionId).map(
+                                      (opt) => (
+                                        <option
+                                          key={opt.value}
+                                          value={opt.value}
+                                        >
+                                          {opt.label}
+                                        </option>
+                                      ),
+                                    )}
+                                  </select>
+                                </td>
+                              )}
+                              {visibleColumns.timestamp && (
+                                <td>{formatDate(record.timestamp)}</td>
+                              )}
+                            </tr>
+
+                            {/* Expanded Nested JSON Row */}
+                            {isRowExpanded && (
+                              <tr className="expanded-row">
+                                <td colSpan={visibleColumnsCount + 1}>
+                                  <div className="json-container">
+                                    <h4>Raw Card Data</h4>
+                                    <div className="json-tree-wrapper">
+                                      <JsonTreeView data={record.details} />
+                                    </div>
+                                  </div>
+                                </td>
+                              </tr>
+                            )}
+                          </React.Fragment>
+                        );
+                      })}
+                      {filtered.length > visibleCount && (
+                        <tr ref={sentinelRef} className="lazy-sentinel-row">
+                          <td
+                            colSpan={visibleColumnsCount + 1}
+                            style={{
+                              textAlign: "center",
+                              padding: "1.25rem",
+                              color: "#8a8a8a",
+                              fontSize: "0.85rem",
+                            }}
+                          >
+                            Loading more entries...
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="list-view-container">
+                  {filtered.slice(0, visibleCount).map((record) => {
+                    const isRowExpanded = !!expandedRows[record.id];
+                    return (
+                      <div
+                        key={record.id}
+                        className={`analysis-card ${record.direction} ${isRowExpanded ? "expanded" : ""}`}
+                      >
+                        <div className="card-top">
+                          <div className="card-info">
+                            {visibleColumns.snapshot && (
+                              <span className="card-snapshot-badge">
+                                {record.sessionTitle}
+                              </span>
+                            )}
+                            <div className="card-identity">
+                              {visibleColumns.cardId && (
+                                <span className="card-pokemon-id">
+                                  #{record.cardId.padStart(3, "0")}
+                                </span>
+                              )}
+                              {visibleColumns.name && (
+                                <h3 className="card-pokemon-name">
+                                  {record.name}
+                                </h3>
+                              )}
+                            </div>
+                          </div>
+                          {record.details?.imageUrl && (
+                            <img
+                              src={record.details.imageUrl}
+                              alt={record.name}
+                              className="card-pokemon-image"
+                              loading="lazy"
+                            />
+                          )}
+                        </div>
+
+                        <div className="card-middle">
+                          {visibleColumns.label && (
+                            <div className="card-categorization">
+                              <label>Categorization</label>
+                              <select
+                                value={record.direction}
+                                onChange={(e) =>
+                                  handleCategorizationChange(
+                                    record,
+                                    e.target.value,
+                                  )
+                                }
+                                className={`badge-label-select ${record.direction}`}
+                              >
+                                {getSessionOptions(record.sessionId).map(
+                                  (opt) => (
+                                    <option key={opt.value} value={opt.value}>
+                                      {opt.label}
+                                    </option>
+                                  ),
+                                )}
+                              </select>
+                            </div>
+                          )}
+                          {visibleColumns.timestamp && (
+                            <div className="card-timestamp">
+                              <label>Time</label>
+                              <span>{formatDate(record.timestamp)}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="card-bottom">
+                          <button
+                            className="btn-secondary toggle-details-btn"
+                            onClick={() => toggleRowExpanded(record.id)}
+                          >
+                            <span>
+                              {isRowExpanded ? "Hide Details" : "View Details"}
+                            </span>
+                            <svg
+                              viewBox="0 0 24 24"
+                              width="14"
+                              height="14"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.5"
+                              className={`chevron-icon ${isRowExpanded ? "expanded" : ""}`}
+                            >
+                              <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                          </button>
+                        </div>
+
+                        {isRowExpanded && (
+                          <div className="card-details-expanded">
+                            <div className="json-container">
+                              <h4>Raw Card Data</h4>
+                              <div className="json-tree-wrapper">
+                                <JsonTreeView data={record.details} />
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                  {filtered.length > visibleCount && (
+                    <div ref={sentinelRef} className="lazy-sentinel-div">
+                      Loading more entries...
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </main>
