@@ -2,7 +2,7 @@ export interface CardData {
   id: string; // Unique identifier, e.g., "pokemon-1"
   imageUrl: string; // Sprite or artwork URL
   primaryText: string; // e.g., "Bulbasaur"
-  secondaryText: string; // e.g., "Seed Pokémon • #001"
+  secondaryText: string; // e.g., "NationalDex #001"
 }
 
 export interface IDataAdapter {
