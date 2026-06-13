@@ -148,7 +148,7 @@ The spreadsheet dynamically filters down to show you only the Pokémon that are 
       </td>
     </tr>
     <tr>
-      <td align="center">
+      <td align="center" colspan="2">
         <br /><sub>Active Deck with Glow Overlays</sub>
       </td>
     </tr>

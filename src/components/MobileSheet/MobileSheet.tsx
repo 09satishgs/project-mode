@@ -27,15 +27,19 @@ export const MobileSheet: React.FC<MobileSheetProps> = ({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
 
-  // Prevent background body scrolling when sheet is open
+  // Prevent background body and root viewport scrolling when sheet is open
   useEffect(() => {
+    const rootEl = document.getElementById("root");
     if (isOpen) {
       document.body.style.overflow = "hidden";
+      if (rootEl) rootEl.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
+      if (rootEl) rootEl.style.overflow = "";
     }
     return () => {
       document.body.style.overflow = "";
+      if (rootEl) rootEl.style.overflow = "";
     };
   }, [isOpen]);
 

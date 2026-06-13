@@ -2,6 +2,7 @@ import React from "react";
 import { DEX_OPTIONS } from "../../constants/pokedexes";
 import { HEADINGS } from "../../constants/headings";
 import { useNewSessionModal } from "./useNewSessionModal";
+import MobileSheet from "../MobileSheet/MobileSheet";
 import "./NewSessionModal.scss";
 
 interface NewSessionModalProps {
@@ -36,20 +37,8 @@ export const NewSessionModal: React.FC<NewSessionModalProps> = ({
   } = useNewSessionModal({ onSessionCreated });
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>{HEADINGS.modalTitle}</h2>
-          <button
-            className="close-btn"
-            onClick={onClose}
-            aria-label="Close modal"
-          >
-            &times;
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="modal-form">
+    <MobileSheet isOpen={true} onClose={onClose} title={HEADINGS.modalTitle}>
+      <form onSubmit={handleSubmit} className="modal-form">
           {error && <div className="form-error">{error}</div>}
 
           <div className="form-group">
@@ -191,7 +180,6 @@ export const NewSessionModal: React.FC<NewSessionModalProps> = ({
             </button>
           </div>
         </form>
-      </div>
-    </div>
+    </MobileSheet>
   );
 };
