@@ -26,5 +26,52 @@ export const HEADINGS = {
   // Errors
   errorEmptyTitle: "Please enter a session title.",
   errorNoCards: "No cards found for this Dex option.",
-  errorFetchFailed: "Failed to fetch Dex data. Please check your connection."
+  errorFetchFailed: "Failed to fetch Dex data. Please check your connection.",
+
+  // Dashboard Text & Info
+  dashboardTitle: "M.O.D.E.",
+  dashboardSubtitle: "Mobile Optimized Dex Entry",
+  sectionInProgress: "In Progress",
+  sectionCompleted: "Completed",
+  loadingSessions: "Loading sessions...",
+  emptyInProgress: "No in-progress snapshots.",
+  emptyCompleted: "No completed snapshots yet.",
+  btnAnalyse: "Analyse",
+  btnNew: "New",
+  tooltipDelete: "Delete snapshot",
+  tooltipUpload: "Upload snapshot JSON",
+
+  // Dashboard Actions Confirmation/Alerts
+  confirmDeleteSession:
+    "Are you sure you want to delete this snapshot and all swipe history?",
+  errUploadInvalidJson: "Invalid file content. Must be a JSON object.",
+  errUploadMissingSession: "Missing session metadata in JSON.",
+  errUploadMissingTitleDex: "Session title or dex type is missing.",
+  errUploadMissingActions: "Missing actions list in JSON.",
+  msgUploadSuccessPre: "Snapshot",
+  msgUploadSuccessPost: "imported successfully!",
+  msgUploadFailed: "Import failed:",
+
+  // Session View Copy
+  loadingPokedex: "Syncing Pokedex entries...",
+  accessErrorTitle: "Access Error",
+  sessionNotFound: "Session not found.",
+  defaultSessionError: "An error occurred loading the snapshot.",
+  btnBackToDashboard: "Back to Dashboard",
+  completedStamp: "100% DONE",
+  completedTitle: "Snapshot Completed!",
+  completedSubtitle: "All {total} entries have been categorized.",
+  resultEmptyColumn: "None",
+  btnRestartSnapshot: "Restart Snapshot",
+  btnExportJson: "Export JSON",
+  btnAnalyseSnapshots: "Analyse Snapshots",
+  confirmRestartSession:
+    "Wipe all swipe data and saved card JSON for this session and start over?",
+  confirmAutoSwipePrefix: "Are you sure you want to categorize all remaining ",
+  confirmAutoSwipeMid: ' Pokémon as "',
+  confirmAutoSwipeSuffix: '"?',
+  errAutoSwipeFailed: "Failed to auto-categorize remaining Pokémon.",
+  errLoadPokedexFailed:
+    "Failed to load Pokedex. Please check internet connection.",
+  autoSwipePrefix: "Auto ",
 };
