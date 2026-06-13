@@ -6,7 +6,7 @@ import JsonTreeView from "../../components/JsonTreeView/JsonTreeView";
 import MobileSheet from "../../components/MobileSheet/MobileSheet";
 import "./Analyse.scss";
 
-type QueryRelation = 'INTERSECT' | 'UNION' | 'DIFFERENCE';
+type QueryRelation = "INTERSECT" | "UNION" | "DIFFERENCE";
 
 interface JoinedRecord {
   id: string; // Unique row ID: sessionId_cardId
@@ -73,13 +73,17 @@ export const Analyse: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [showQueryBuilder, setShowQueryBuilder] = useState(false);
   const [isQueryBuilderActive, setIsQueryBuilderActive] = useState(false);
-  const [queryBlocks, setQueryBlocks] = useState<Array<{ id: string; sessionIds: string[]; labels: string[] }>>([
-    { id: 'block-1', sessionIds: [], labels: [] }
-  ]);
+  const [queryBlocks, setQueryBlocks] = useState<
+    Array<{ id: string; sessionIds: string[]; labels: string[] }>
+  >([{ id: "block-1", sessionIds: [], labels: [] }]);
   const [queryRelations, setQueryRelations] = useState<QueryRelation[]>([]);
   const [blockCounts, setBlockCounts] = useState<Record<string, number>>({});
-  const [queryBuilderRecords, setQueryBuilderRecords] = useState<JoinedRecord[]>([]);
-  const [savedQueries, setSavedQueries] = useState<Array<{ id: string; name: string; blocks: any[]; relations: any[] }>>([]);
+  const [queryBuilderRecords, setQueryBuilderRecords] = useState<
+    JoinedRecord[]
+  >([]);
+  const [savedQueries, setSavedQueries] = useState<
+    Array<{ id: string; name: string; blocks: any[]; relations: any[] }>
+  >([]);
 
   // Mobile-Optimized Collapsible Filters & Columns States
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
@@ -234,7 +238,9 @@ export const Analyse: React.FC = () => {
 
   // Sort and Filter joined records
   const getFilteredRecords = () => {
-    const sourceRecords = isQueryBuilderActive ? queryBuilderRecords : joinedRecords;
+    const sourceRecords = isQueryBuilderActive
+      ? queryBuilderRecords
+      : joinedRecords;
     return sourceRecords
       .filter((record) => {
         // Session Filter: If query builder is active and we have selectedSessionIds, filter by them
@@ -309,15 +315,15 @@ export const Analyse: React.FC = () => {
   const combineSets = (
     records1: JoinedRecord[],
     records2: JoinedRecord[],
-    relation: QueryRelation
+    relation: QueryRelation,
   ): JoinedRecord[] => {
     const set2Ids = new Set(records2.map((r) => r.cardId));
 
-    if (relation === 'INTERSECT') {
+    if (relation === "INTERSECT") {
       return records1.filter((r) => set2Ids.has(r.cardId));
-    } else if (relation === 'DIFFERENCE') {
+    } else if (relation === "DIFFERENCE") {
       return records1.filter((r) => !set2Ids.has(r.cardId));
-    } else if (relation === 'UNION') {
+    } else if (relation === "UNION") {
       const merged = [...records1];
       const set1Ids = new Set(records1.map((r) => r.cardId));
       records2.forEach((r) => {
@@ -345,16 +351,16 @@ export const Analyse: React.FC = () => {
         }
 
         const actions = await db.swipeActions
-          .where('sessionId')
+          .where("sessionId")
           .anyOf(block.sessionIds)
           .toArray();
 
         const cardDetailsList = await db.cardDetails
-          .where('sessionId')
+          .where("sessionId")
           .anyOf(block.sessionIds)
           .toArray();
         const cardDetailsMap = new Map(
-          cardDetailsList.map((c) => [`${c.sessionId}_${c.cardId}`, c.details])
+          cardDetailsList.map((c) => [`${c.sessionId}_${c.cardId}`, c.details]),
         );
 
         const blockRecords: JoinedRecord[] = [];
@@ -364,11 +370,14 @@ export const Analyse: React.FC = () => {
           if (!sess) return;
 
           let label: string = act.direction;
-          if (act.direction === 'left') label = sess.swipeLeftLabel;
-          else if (act.direction === 'right') label = sess.swipeRightLabel;
-          else if (act.direction === 'double-click' && sess.doubleClickLabel) label = sess.doubleClickLabel;
-          else if (act.direction === 'up' && sess.swipeUpLabel) label = sess.swipeUpLabel;
-          else if (act.direction === 'down' && sess.swipeDownLabel) label = sess.swipeDownLabel;
+          if (act.direction === "left") label = sess.swipeLeftLabel;
+          else if (act.direction === "right") label = sess.swipeRightLabel;
+          else if (act.direction === "double-click" && sess.doubleClickLabel)
+            label = sess.doubleClickLabel;
+          else if (act.direction === "up" && sess.swipeUpLabel)
+            label = sess.swipeUpLabel;
+          else if (act.direction === "down" && sess.swipeDownLabel)
+            label = sess.swipeDownLabel;
 
           if (block.labels.includes(label)) {
             const cardKey = `${act.sessionId}_${act.cardId}`;
@@ -403,14 +412,14 @@ export const Analyse: React.FC = () => {
       let combined = blockRecordsMap[queryBlocks[0].id] || [];
 
       for (let i = 1; i < queryBlocks.length; i++) {
-        const relation = queryRelations[i - 1] || 'INTERSECT';
+        const relation = queryRelations[i - 1] || "INTERSECT";
         const nextBlockRecords = blockRecordsMap[queryBlocks[i].id] || [];
         combined = combineSets(combined, nextBlockRecords, relation);
       }
 
       setQueryBuilderRecords(combined);
     } catch (err) {
-      console.error('Failed to calculate query builder matches:', err);
+      console.error("Failed to calculate query builder matches:", err);
     }
   };
 
@@ -423,7 +432,7 @@ export const Analyse: React.FC = () => {
 
   // Hydrate query builder from URL parameter
   useEffect(() => {
-    const queryB64 = searchParams.get('query');
+    const queryB64 = searchParams.get("query");
     if (queryB64) {
       try {
         const decoded = JSON.parse(decodeURIComponent(atob(queryB64)));
@@ -434,7 +443,7 @@ export const Analyse: React.FC = () => {
           setShowQueryBuilder(true);
         }
       } catch (err) {
-        console.error('Failed to parse query from URL:', err);
+        console.error("Failed to parse query from URL:", err);
       }
     }
   }, [searchParams]);
@@ -443,7 +452,7 @@ export const Analyse: React.FC = () => {
   const addBlock = () => {
     const newId = `block-${Date.now()}`;
     setQueryBlocks([...queryBlocks, { id: newId, sessionIds: [], labels: [] }]);
-    setQueryRelations([...queryRelations, 'INTERSECT']);
+    setQueryRelations([...queryRelations, "INTERSECT"]);
   };
 
   const removeBlock = (id: string) => {
@@ -510,7 +519,7 @@ export const Analyse: React.FC = () => {
 
   const isQueryValid = () => {
     return queryBlocks.every(
-      (b) => b.sessionIds.length > 0 && b.labels.length > 0
+      (b) => b.sessionIds.length > 0 && b.labels.length > 0,
     );
   };
 
@@ -667,24 +676,27 @@ export const Analyse: React.FC = () => {
   const filtered = getFilteredRecords();
 
   // Callback ref for lazy loading table rows via IntersectionObserver
-  const sentinelRef = useCallback((node: HTMLTableRowElement | null) => {
-    if (observerRef.current) {
-      observerRef.current.disconnect();
-      observerRef.current = null;
-    }
+  const sentinelRef = useCallback(
+    (node: HTMLTableRowElement | null) => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+        observerRef.current = null;
+      }
 
-    if (node && filtered.length > visibleCount) {
-      observerRef.current = new IntersectionObserver(
-        (entries) => {
-          if (entries[0].isIntersecting) {
-            setVisibleCount((prev) => Math.min(prev + 50, filtered.length));
-          }
-        },
-        { root: null, rootMargin: "150px", threshold: 0.1 }
-      );
-      observerRef.current.observe(node);
-    }
-  }, [filtered.length, visibleCount]);
+      if (node && filtered.length > visibleCount) {
+        observerRef.current = new IntersectionObserver(
+          (entries) => {
+            if (entries[0].isIntersecting) {
+              setVisibleCount((prev) => Math.min(prev + 50, filtered.length));
+            }
+          },
+          { root: null, rootMargin: "150px", threshold: 0.1 },
+        );
+        observerRef.current.observe(node);
+      }
+    },
+    [filtered.length, visibleCount],
+  );
 
   const formatDate = (timestamp: number) => {
     return new Date(timestamp).toLocaleTimeString(undefined, {
@@ -759,12 +771,26 @@ export const Analyse: React.FC = () => {
         >
           <span className="icon">
             {isFiltersOpen ? (
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
             ) : (
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
                 <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
               </svg>
             )}
@@ -782,16 +808,32 @@ export const Analyse: React.FC = () => {
               setIsFiltersOpen(false);
             }
           }}
-          aria-label={showQueryBuilder ? "Close Query Builder" : "Show Query Builder"}
+          aria-label={
+            showQueryBuilder ? "Close Query Builder" : "Show Query Builder"
+          }
         >
           <span className="icon">
             {showQueryBuilder ? (
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
             ) : (
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
                 <rect x="3" y="3" width="7" height="9" />
                 <rect x="14" y="3" width="7" height="5" />
                 <rect x="14" y="12" width="7" height="9" />
@@ -800,7 +842,9 @@ export const Analyse: React.FC = () => {
             )}
           </span>
           <span className="label-text">Close Query Builder</span>
-          {isQueryBuilderActive && !showQueryBuilder && <span className="active-dot" />}
+          {isQueryBuilderActive && !showQueryBuilder && (
+            <span className="active-dot" />
+          )}
         </button>
       </div>
 
@@ -811,7 +855,12 @@ export const Analyse: React.FC = () => {
           {isQueryBuilderActive && (
             <div className="query-active-banner animate-slide-down">
               <span>Custom Query is currently filtering the spreadsheet.</span>
-              <button className="btn-secondary btn-small" onClick={resetQueryBuilder}>Reset Filter</button>
+              <button
+                className="btn-secondary btn-small"
+                onClick={resetQueryBuilder}
+              >
+                Reset Filter
+              </button>
             </div>
           )}
 
@@ -819,7 +868,7 @@ export const Analyse: React.FC = () => {
             <div className="loader-container">
               <span className="spinner"></span> Joining snapshot datasets...
             </div>
-          ) : (!isQueryBuilderActive && selectedSessionIds.length === 0) ? (
+          ) : !isQueryBuilderActive && selectedSessionIds.length === 0 ? (
             <div className="empty-state">
               <p>
                 Select at least one completed snapshot from the sidebar filters
@@ -1064,7 +1113,7 @@ export const Analyse: React.FC = () => {
                             <tr className="expanded-row">
                               <td colSpan={visibleColumnsCount + 1}>
                                 <div className="json-container">
-                                  <h4>Raw Nested Card Credentials</h4>
+                                  <h4>Raw Card Data</h4>
                                   <div className="json-tree-wrapper">
                                     <JsonTreeView data={record.details} />
                                   </div>
@@ -1191,7 +1240,11 @@ export const Analyse: React.FC = () => {
               <label>Load Saved Query</label>
               <div className="saved-queries-list">
                 {savedQueries.map((q) => (
-                  <div key={q.id} className="saved-query-pill" onClick={() => handleLoadQuery(q.id)}>
+                  <div
+                    key={q.id}
+                    className="saved-query-pill"
+                    onClick={() => handleLoadQuery(q.id)}
+                  >
                     <span className="query-name">{q.name}</span>
                     <button
                       className="delete-query-btn"
@@ -1213,8 +1266,13 @@ export const Analyse: React.FC = () => {
                 {index > 0 && (
                   <div className="relation-connector">
                     <select
-                      value={queryRelations[index - 1] || 'INTERSECT'}
-                      onChange={(e) => handleRelationChange(index - 1, e.target.value as QueryRelation)}
+                      value={queryRelations[index - 1] || "INTERSECT"}
+                      onChange={(e) =>
+                        handleRelationChange(
+                          index - 1,
+                          e.target.value as QueryRelation,
+                        )
+                      }
                     >
                       <option value="INTERSECT">INTERSECT (AND)</option>
                       <option value="UNION">UNION (OR)</option>
@@ -1228,20 +1286,30 @@ export const Analyse: React.FC = () => {
                   <div className="block-header">
                     <h3>Filter Block #{index + 1}</h3>
                     {queryBlocks.length > 1 && (
-                      <button className="remove-block-btn" onClick={() => removeBlock(block.id)}>Remove</button>
+                      <button
+                        className="remove-block-btn"
+                        onClick={() => removeBlock(block.id)}
+                      >
+                        Remove
+                      </button>
                     )}
                   </div>
-                  
+
                   <div className="block-body">
                     <div className="form-group">
                       <label>Select Snapshot(s)</label>
                       <div className="sessions-multiselect">
-                        {completedSessions.map(sess => (
-                          <label key={sess.id} className="checkbox-item-compact">
+                        {completedSessions.map((sess) => (
+                          <label
+                            key={sess.id}
+                            className="checkbox-item-compact"
+                          >
                             <input
                               type="checkbox"
                               checked={block.sessionIds.includes(sess.id)}
-                              onChange={() => toggleBlockSession(index, sess.id)}
+                              onChange={() =>
+                                toggleBlockSession(index, sess.id)
+                              }
                             />
                             <span>{sess.title}</span>
                           </label>
@@ -1253,22 +1321,30 @@ export const Analyse: React.FC = () => {
                       <div className="form-group">
                         <label>Select Label(s)</label>
                         <div className="labels-multiselect">
-                          {getBlockAvailableLabels(block.sessionIds).map(lbl => (
-                            <label key={lbl} className="checkbox-item-compact">
-                              <input
-                                type="checkbox"
-                                checked={block.labels.includes(lbl)}
-                                onChange={() => toggleBlockLabel(index, lbl)}
-                              />
-                              <span>{lbl}</span>
-                            </label>
-                          ))}
+                          {getBlockAvailableLabels(block.sessionIds).map(
+                            (lbl) => (
+                              <label
+                                key={lbl}
+                                className="checkbox-item-compact"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={block.labels.includes(lbl)}
+                                  onChange={() => toggleBlockLabel(index, lbl)}
+                                />
+                                <span>{lbl}</span>
+                              </label>
+                            ),
+                          )}
                         </div>
                       </div>
                     )}
 
                     <div className="block-summary">
-                      <span>Matching cards in this block: <strong>{blockCounts[block.id] || 0}</strong></span>
+                      <span>
+                        Matching cards in this block:{" "}
+                        <strong>{blockCounts[block.id] || 0}</strong>
+                      </span>
                     </div>
                   </div>
                 </div>
