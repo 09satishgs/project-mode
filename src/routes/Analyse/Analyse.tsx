@@ -1276,32 +1276,48 @@ export const Analyse: React.FC = () => {
                           )}
                         </div>
 
-                        <div className="card-bottom">
+                        {!isRowExpanded && (
                           <button
-                            className="btn-secondary toggle-details-btn"
+                            className="card-expand-chevron"
                             onClick={() => toggleRowExpanded(record.id)}
+                            aria-label="View Details"
                           >
-                            <span>
-                              {isRowExpanded ? "Hide Details" : "View Details"}
-                            </span>
                             <svg
                               viewBox="0 0 24 24"
-                              width="14"
-                              height="14"
+                              width="18"
+                              height="18"
                               fill="none"
                               stroke="currentColor"
                               strokeWidth="2.5"
-                              className={`chevron-icon ${isRowExpanded ? "expanded" : ""}`}
                             >
-                              <polyline points="6 9 12 15 18 9" />
+                              <polyline points="9 18 15 12 9 6" />
                             </svg>
                           </button>
-                        </div>
+                        )}
 
                         {isRowExpanded && (
                           <div className="card-details-expanded">
                             <div className="json-container">
-                              <h4>Raw Card Data</h4>
+                              <div className="json-header">
+                                <h4>Raw Card Data</h4>
+                                <button
+                                  className="btn-close-details"
+                                  onClick={() => toggleRowExpanded(record.id)}
+                                  aria-label="Close Details"
+                                >
+                                  <svg
+                                    viewBox="0 0 24 24"
+                                    width="16"
+                                    height="16"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2.5"
+                                  >
+                                    <line x1="18" y1="6" x2="6" y2="18" />
+                                    <line x1="6" y1="6" x2="18" y2="18" />
+                                  </svg>
+                                </button>
+                              </div>
                               <div className="json-tree-wrapper">
                                 <JsonTreeView data={record.details} />
                               </div>

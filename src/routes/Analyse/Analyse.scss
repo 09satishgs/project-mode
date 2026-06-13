@@ -420,32 +420,59 @@
       td {
         padding: 1.25rem 2rem;
       }
-
-      .json-container {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-
-        h4 {
-          font-size: 0.75rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          color: $color-text-secondary;
-          border-bottom: 1px solid $color-border;
-          padding-bottom: 0.4rem;
-        }
-      }
-
-      .json-tree-wrapper {
-        background: rgba($color-black, 0.3);
-        border: 1px solid $color-border;
-        border-radius: 8px;
-        padding: 1rem;
-        overflow-x: auto;
-        @include scrollbar-minimal;
-      }
     }
+  }
+}
+
+// Collapsible raw JSON details formatting
+.json-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 100%;
+
+  h4 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: $color-text-secondary;
+    border-bottom: 1px solid $color-border;
+    padding-bottom: 0.4rem;
+  }
+}
+
+.json-tree-wrapper {
+  max-width: 280px; // Specific default max width for smaller mobile viewports
+  overflow-x: auto;
+  background: rgba($color-black, 0.3);
+  border: 1px solid $color-border;
+  border-radius: 8px;
+  padding: 1rem;
+  @include scrollbar-minimal;
+
+  @media (min-width: 375px) {
+    max-width: 320px;
+  }
+
+  @media (min-width: 480px) {
+    max-width: 400px;
+  }
+
+  @media (min-width: 620px) {
+    max-width: 260px; // Bounded for 2-column layout cards
+  }
+
+  @media (min-width: 768px) {
+    max-width: 330px;
+  }
+
+  @media (min-width: 1024px) {
+    max-width: 270px; // Bounded for 3-column layout cards
+  }
+
+  @media (min-width: 1200px) {
+    max-width: 345px;
   }
 }
 
@@ -1044,22 +1071,21 @@
   border-radius: 4px;
 }
 
-// List View / Card View Styles
 .list-view-container {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 1rem;
   padding: 1.25rem 0;
   overflow-y: auto;
   @include scrollbar-minimal;
 
   @media (min-width: 620px) {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1.25rem;
   }
 
   @media (min-width: 1024px) {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .lazy-sentinel-div {
@@ -1082,6 +1108,10 @@
   gap: 1rem;
   position: relative;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:not(.expanded) {
+    padding-right: 3.25rem;
+  }
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
   &:hover {
@@ -1203,42 +1233,66 @@
     }
   }
 
-  .card-bottom {
+  .card-expand-chevron {
+    position: absolute;
+    right: 0.85rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: $color-text-muted;
+    cursor: pointer;
+    padding: 0.5rem;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
 
-    .toggle-details-btn {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.4rem 0.75rem;
-      font-size: 0.8rem;
-      font-weight: 600;
+    &:hover {
       color: $color-white;
-      border-radius: 6px;
-      border: 1px solid $color-border-light;
-      background: rgba(255, 255, 255, 0.02);
-      cursor: pointer;
-      transition: all 0.2s ease;
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: $color-text-secondary;
-      }
-
-      .chevron-icon {
-        transition: transform 0.2s ease;
-        &.expanded {
-          transform: rotate(180deg);
-        }
-      }
+      background: rgba(255, 255, 255, 0.05);
     }
   }
 
   .card-details-expanded {
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     padding-top: 0.75rem;
+
+    .json-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid $color-border;
+      padding-bottom: 0.4rem;
+
+      h4 {
+        border-bottom: none !important;
+        padding-bottom: 0 !important;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: $color-text-secondary;
+      }
+
+      .btn-close-details {
+        background: transparent;
+        border: none;
+        color: $color-text-muted;
+        cursor: pointer;
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+
+        &:hover {
+          color: $color-white;
+          background: rgba(255, 255, 255, 0.05);
+        }
+      }
+    }
   }
 }
-
