@@ -1,0 +1,32 @@
+{
+  "rewrites": [
+    {
+      "source": "/project-mode/assets/:path*",
+      "destination": "/assets/:path*"
+    },
+    {
+      "source": "/project-mode/favicon.svg",
+      "destination": "/favicon.svg"
+    },
+    {
+      "source": "/project-mode/registerSW.js",
+      "destination": "/registerSW.js"
+    },
+    {
+      "source": "/project-mode/manifest.webmanifest",
+      "destination": "/manifest.webmanifest"
+    },
+    {
+      "source": "/project-mode/sw.js",
+      "destination": "/sw.js"
+    },
+    {
+      "source": "/project-mode/workbox-:hash.js",
+      "destination": "/workbox-:hash.js"
+    },
+    {
+      "source": "/project-mode/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
