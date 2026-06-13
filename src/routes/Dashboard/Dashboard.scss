@@ -1,11 +1,11 @@
-@import '../../styles/variables';
-@import '../../styles/mixins';
+@import "../../styles/variables";
+@import "../../styles/mixins";
 
 .dashboard-view {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  padding: 1.5rem 1.5rem 6.5rem 1.5rem; // extra padding at bottom for floating button
+  padding: 1.5rem 1.5rem 0 1.5rem;
   position: relative;
   background-color: $color-bg;
 }
@@ -39,7 +39,7 @@
     background: linear-gradient(to bottom, $color-accent 50%, $color-white 50%);
 
     &::after {
-      content: '';
+      content: "";
       position: absolute;
       top: 50%;
       left: 50%;
@@ -229,22 +229,22 @@
 }
 
 .dashboard-actions {
-  position: fixed;
+  position: sticky;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
   width: 100%;
-  max-width: $max-width-mobile;
+  margin-top: auto;
   padding: 1.5rem;
-  background: linear-gradient(to top, $color-bg 80%, rgba($color-bg, 0));
+  background: rgba($color-bg, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid $color-border;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
-  pointer-events: none; // Let scroll pass through background
   z-index: 100;
 
-  .start-new-btn, .analyse-btn {
-    pointer-events: auto; // Re-enable clicks on button
+  .start-new-btn,
+  .analyse-btn {
     border-radius: 12px;
     font-size: 0.95rem;
     letter-spacing: -0.2px;
@@ -265,8 +265,6 @@
     @include button-secondary;
     border: 1px solid $color-border-light;
     background: rgba($color-bg-card, 0.85);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
     color: $color-text-primary;
   }
 }
