@@ -34,7 +34,7 @@
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    border: 3px solid $color-accent;
+    border: 3px solid $color-bg;
     position: relative;
     background: linear-gradient(to bottom, $color-accent 50%, $color-white 50%);
 
@@ -46,8 +46,8 @@
       transform: translate(-50%, -50%);
       width: 6px;
       height: 6px;
-      background-color: $color-bg;
-      border: 2px solid $color-accent;
+      background-color: $color-white;
+      border: 2px solid $color-bg;
       border-radius: 50%;
     }
   }
@@ -69,6 +69,43 @@
 }
 
 .sessions-section {
+  .section-header-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid $color-border;
+    padding-bottom: 0.5rem;
+
+    h2 {
+      margin-bottom: 0 !important;
+      border-bottom: none !important;
+      padding-bottom: 0 !important;
+    }
+
+    .upload-icon-btn {
+      background: transparent;
+      border: none;
+      color: $color-text-secondary;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.25rem;
+      border-radius: 4px;
+      transition: $transition-default;
+
+      &:hover {
+        color: $color-accent;
+        background: rgba($color-accent, 0.1);
+      }
+
+      svg {
+        display: block;
+      }
+    }
+  }
+
   h2 {
     font-size: 0.85rem;
     font-weight: 600;
@@ -233,23 +270,28 @@
   bottom: 0;
   width: 100%;
   margin-top: auto;
-  padding: 1.5rem;
+  padding: 1rem 1.5rem;
   background: rgba($color-bg, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-top: 1px solid $color-border;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  gap: 0.75rem;
   z-index: 100;
 
   .start-new-btn,
   .analyse-btn {
     border-radius: 12px;
-    font-size: 0.95rem;
+    font-size: 0.82rem;
     letter-spacing: -0.2px;
-    padding: 0.85rem;
+    padding: 0.75rem 0.5rem;
     width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &:active {
       transform: scale(0.97);

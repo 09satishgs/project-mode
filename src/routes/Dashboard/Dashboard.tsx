@@ -85,6 +85,97 @@ export const Dashboard: React.FC = () => {
     }
   };
 
+  const handleUploadJSON = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    e.target.value = "";
+
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+
+      if (!data || typeof data !== "object") {
+        throw new Error("Invalid file content. Must be a JSON object.");
+      }
+      if (!data.session || typeof data.session !== "object") {
+        throw new Error("Missing session metadata in JSON.");
+      }
+      if (!data.session.title || !data.session.dexType) {
+        throw new Error("Session title or dex type is missing.");
+      }
+      if (!data.actions || !Array.isArray(data.actions)) {
+        throw new Error("Missing actions list in JSON.");
+      }
+
+      function generateUUID() {
+        if (window.crypto && crypto.randomUUID) {
+          return crypto.randomUUID();
+        }
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+          /[xy]/g,
+          function (c) {
+            const r = (Math.random() * 16) | 0;
+            const v = c === "x" ? r : (r & 0x3) | 0x8;
+            return v.toString(16);
+          },
+        );
+      }
+      const newSessionId = generateUUID();
+      const originalTitle = data.session.title;
+
+      const swipedCount = data.actions.length;
+      const totalCards = data.session.totalCards || swipedCount;
+      const status = swipedCount >= totalCards ? "completed" : "in-progress";
+
+      await db.transaction(
+        "rw",
+        [db.sessions, db.swipeActions, db.cardDetails],
+        async () => {
+          await db.sessions.add({
+            id: newSessionId,
+            title: `${originalTitle} (Imported)`,
+            dexType: data.session.dexType,
+            swipeLeftLabel: data.session.swipeLeftLabel || "Caught",
+            swipeRightLabel: data.session.swipeRightLabel || "Missing",
+            doubleClickLabel: data.session.doubleClickLabel,
+            swipeUpLabel: data.session.swipeUpLabel,
+            swipeDownLabel: data.session.swipeDownLabel,
+            createdAt: data.session.createdAt || Date.now(),
+            status,
+            totalCards,
+          });
+
+          for (const act of data.actions) {
+            if (!act.cardId || !act.direction) continue;
+
+            await db.swipeActions.add({
+              sessionId: newSessionId,
+              cardId: act.cardId,
+              direction: act.direction,
+              timestamp: act.timestamp || Date.now(),
+            });
+
+            if (act.cardDetails) {
+              await db.cardDetails.put({
+                id: `${newSessionId}_${act.cardId}`,
+                sessionId: newSessionId,
+                cardId: act.cardId,
+                details: act.cardDetails,
+              });
+            }
+          }
+        },
+      );
+
+      alert(`Snapshot "${originalTitle}" imported successfully!`);
+      fetchSessions();
+    } catch (err: any) {
+      console.error("Failed to upload snapshot:", err);
+      alert(`Import failed: ${err.message || err}`);
+    }
+  };
+
   const getDexDisplayName = (id: string) => {
     return DEX_OPTIONS.find((opt) => opt.id === id)?.name || id;
   };
@@ -178,7 +269,37 @@ export const Dashboard: React.FC = () => {
         </section>
 
         <section className="sessions-section">
-          <h2>Completed</h2>
+          <div className="section-header-row">
+            <h2>Completed</h2>
+            <button
+              className="upload-icon-btn"
+              onClick={() =>
+                document.getElementById("upload-snapshot-file")?.click()
+              }
+              title="Upload snapshot JSON"
+              aria-label="Upload snapshot JSON"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+            </button>
+            <input
+              type="file"
+              id="upload-snapshot-file"
+              accept=".json"
+              onChange={handleUploadJSON}
+              style={{ display: "none" }}
+            />
+          </div>
           {loading ? null : completedSessions.length === 0 ? (
             <div className="empty-state">
               <p>No completed snapshots yet.</p>
@@ -250,7 +371,7 @@ export const Dashboard: React.FC = () => {
             <line x1="12" y1="20" x2="12" y2="4" />
             <line x1="6" y1="20" x2="6" y2="14" />
           </svg>
-          Analyse Snapshots
+          Analyse
         </button>
         <button
           className="btn-primary start-new-btn"
@@ -268,7 +389,7 @@ export const Dashboard: React.FC = () => {
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
           </svg>
-          New Snapshot
+          New
         </button>
       </div>
 

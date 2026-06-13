@@ -77,7 +77,7 @@ export const Session: React.FC = () => {
       const remaining = cards.filter((c) => !swipedIds.has(c.id));
       setRemainingCards(remaining);
       setSwipedCount(cards.length - remaining.length);
-      setCanUndo(actions.length > 0);
+      setCanUndo(actions.length > 0 && remaining.length > 0);
 
       // 5. Populate results lists if completed
       if (remaining.length === 0) {
@@ -162,14 +162,14 @@ export const Session: React.FC = () => {
 
       setRemainingCards(nextRemaining);
       setSwipedCount(newSwipedCount);
-      setCanUndo(true);
+      setCanUndo(nextRemaining.length > 0);
     } catch (err) {
       console.error("Failed to save swipe action transaction:", err);
     }
   };
 
   const handleUndo = async () => {
-    if (!id || swipedCount === 0) return;
+    if (!id || swipedCount === 0 || remainingCards.length === 0) return;
 
     try {
       // Get the last action
@@ -317,6 +317,82 @@ export const Session: React.FC = () => {
     }
   };
 
+  const triggerUpButton = () => {
+    if (remainingCards.length > 0 && !triggerSwipe && session?.swipeUpLabel) {
+      setTriggerSwipe("up");
+    }
+  };
+
+  const triggerDownButton = () => {
+    if (remainingCards.length > 0 && !triggerSwipe && session?.swipeDownLabel) {
+      setTriggerSwipe("down");
+    }
+  };
+
+  const triggerDoubleClickButton = () => {
+    if (remainingCards.length > 0 && !triggerSwipe && session?.doubleClickLabel) {
+      setTriggerSwipe("double-click");
+    }
+  };
+
+  const handleAutoSwipeRemaining = async (direction: "left" | "right") => {
+    if (remainingCards.length === 0 || !id || !session) return;
+
+    const label = direction === "left" ? session.swipeLeftLabel : session.swipeRightLabel;
+    const confirmMessage = `Are you sure you want to categorize all remaining ${remainingCards.length} Pokémon as "${label}"?`;
+    if (!window.confirm(confirmMessage)) return;
+
+    try {
+      setLoading(true);
+
+      await db.transaction(
+        "rw",
+        [db.swipeActions, db.cardDetails, db.sessions],
+        async () => {
+          for (const card of remainingCards) {
+            await db.swipeActions.add({
+              sessionId: id,
+              cardId: card.id,
+              direction,
+              timestamp: Date.now(),
+            });
+
+            await db.cardDetails.put({
+              id: `${id}_${card.id}`,
+              sessionId: id,
+              cardId: card.id,
+              details: card,
+            });
+          }
+
+          await db.sessions.update(id, { status: "completed" });
+        }
+      );
+
+      const actions = await db.swipeActions
+        .where("sessionId")
+        .equals(id)
+        .toArray();
+      const leftIds = new Set(
+        actions.filter((a) => a.direction === "left").map((a) => a.cardId),
+      );
+      const rightIds = new Set(
+        actions.filter((a) => a.direction === "right").map((a) => a.cardId),
+      );
+
+      setLeftSwipedCards(allCards.filter((c) => leftIds.has(c.id)));
+      setRightSwipedCards(allCards.filter((c) => rightIds.has(c.id)));
+      setRemainingCards([]);
+      setSwipedCount(allCards.length);
+      setCanUndo(false);
+    } catch (err) {
+      console.error("Failed to auto swipe remaining:", err);
+      alert("Failed to auto-categorize remaining Pokémon.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="session-view loading-view">
@@ -380,6 +456,22 @@ export const Session: React.FC = () => {
       <div className="session-content">
         {!isCompleted ? (
           <>
+            {/* Auto Actions Panel */}
+            <div className="auto-actions">
+              <button
+                className="auto-btn auto-left"
+                onClick={() => handleAutoSwipeRemaining("left")}
+              >
+                Auto {session.swipeLeftLabel}
+              </button>
+              <button
+                className="auto-btn auto-right"
+                onClick={() => handleAutoSwipeRemaining("right")}
+              >
+                Auto {session.swipeRightLabel}
+              </button>
+            </div>
+
             {/* Card Deck Area */}
             <div className="card-deck-wrapper">
               <div className="card-deck">
@@ -408,7 +500,7 @@ export const Session: React.FC = () => {
             </div>
 
             {/* Bottom Actions Row */}
-            <div className="deck-controls">
+            <div className={`deck-controls count-${2 + (session.swipeUpLabel ? 1 : 0) + (session.doubleClickLabel ? 1 : 0) + (session.swipeDownLabel ? 1 : 0)}`}>
               <button
                 className="control-btn left-action"
                 onClick={triggerLeftButton}
@@ -416,8 +508,8 @@ export const Session: React.FC = () => {
               >
                 <svg
                   viewBox="0 0 24 24"
-                  width="22"
-                  height="22"
+                  width="20"
+                  height="20"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2.5"
@@ -428,6 +520,68 @@ export const Session: React.FC = () => {
                 <span>{session.swipeLeftLabel}</span>
               </button>
 
+              {session.swipeUpLabel && (
+                <button
+                  className="control-btn up-action"
+                  onClick={triggerUpButton}
+                  aria-label={session.swipeUpLabel}
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="20"
+                    height="20"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
+                    <line x1="12" y1="19" x2="12" y2="5" />
+                    <polyline points="5 12 12 5 19 12" />
+                  </svg>
+                  <span>{session.swipeUpLabel}</span>
+                </button>
+              )}
+
+              {session.doubleClickLabel && (
+                <button
+                  className="control-btn double-click-action"
+                  onClick={triggerDoubleClickButton}
+                  aria-label={session.doubleClickLabel}
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="20"
+                    height="20"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                  </svg>
+                  <span>{session.doubleClickLabel}</span>
+                </button>
+              )}
+
+              {session.swipeDownLabel && (
+                <button
+                  className="control-btn down-action"
+                  onClick={triggerDownButton}
+                  aria-label={session.swipeDownLabel}
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="20"
+                    height="20"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <polyline points="19 12 12 19 5 12" />
+                  </svg>
+                  <span>{session.swipeDownLabel}</span>
+                </button>
+              )}
+
               <button
                 className="control-btn right-action"
                 onClick={triggerRightButton}
@@ -436,8 +590,8 @@ export const Session: React.FC = () => {
                 <span>{session.swipeRightLabel}</span>
                 <svg
                   viewBox="0 0 24 24"
-                  width="22"
-                  height="22"
+                  width="20"
+                  height="20"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2.5"
