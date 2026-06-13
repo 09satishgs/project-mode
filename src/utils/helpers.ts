@@ -56,3 +56,32 @@ export const getSwipeLabel = (
     return session.swipeDownLabel;
   return direction;
 };
+
+// Helper to resolve dot-notated paths in nested objects
+export const getNestedValue = (obj: any, path: string): any => {
+  return path.split(".").reduce((acc, part) => {
+    return acc && acc[part] !== undefined ? acc[part] : undefined;
+  }, obj);
+};
+
+// Generic deep recursive search helper
+export const deepSearch = (obj: any, query: string): boolean => {
+  if (!obj) return false;
+  if (typeof obj === "string") return obj.toLowerCase().includes(query);
+  if (typeof obj === "number" || typeof obj === "boolean")
+    return obj.toString().toLowerCase().includes(query);
+  if (typeof obj === "object") {
+    return Object.values(obj).some((val) => deepSearch(val, query));
+  }
+  return false;
+};
+
+// Helper to format time specifically for spreadsheet rows (HH:MM:SS)
+export const formatTime = (timestamp: number): string => {
+  return new Date(timestamp).toLocaleTimeString(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  });
+};

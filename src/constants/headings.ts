@@ -74,4 +74,36 @@ export const HEADINGS = {
   errLoadPokedexFailed:
     "Failed to load Pokedex. Please check internet connection.",
   autoSwipePrefix: "Auto ",
+
+  // Analyse View Copy
+  analyseTitle: "Analyse Snapshots",
+  analyseLoading: "Joining snapshot datasets...",
+  analyseEmptyState:
+    "Select at least one completed snapshot from the sidebar filters to begin analysis.",
+  analyseNoFilteredResults: "No results match the current filters.",
+  analyseShowingEntries: "Showing {count} entries",
+  analyseBannerText: "Custom Query is currently filtering the spreadsheet.",
+  analyseBtnResetFilter: "Reset Filter",
+  analyseBtnExport: "Export",
+  analyseBtnColumns: "Columns",
+  analyseBtnListView: "List",
+  analyseBtnTableView: "Table",
+  analyseRawCardDataHeader: "Raw Card Data",
+  analyseLoadingMore: "Loading more entries...",
+  analyseFiltersTitle: "Filters",
+  analyseSelectSnapshotsLabel: "Select Completed Snapshots",
+  analyseNoSnapshotsAvailable: "No completed snapshots available.",
+  analyseFilterByLabel: "Filter By Categorization",
+  analyseQueryBuilderTitle: "Query Builder",
+  analyseQueryBuilderDesc: "Visual block-based query builder",
+  analyseBtnAddFilterBlock: "Add filter block",
+  analyseBtnApplyQuery: "Apply Query",
+  analyseBtnSaveQuery: "Save Query",
+  analyseLabelViewDetails: "View Details",
+  analyseLabelHideDetails: "Hide Details",
+  analysePromptQueryName: "Enter a name for this custom query:",
+  analyseAlertUpdateCategorizationFailed:
+    "Failed to update categorization in the database.",
+  analyseToastCopied: "Link copied to clipboard!",
+  analyseToastCopyFailed: "Failed to copy link: ",
 };
