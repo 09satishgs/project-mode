@@ -59,6 +59,24 @@ button, input, select, textarea {
   background-color: $color-bg;
   position: relative;
 
+  &.medium-layout {
+    max-width: 768px;
+
+    @media (max-width: 768px) {
+      border-left: none;
+      border-right: none;
+    }
+  }
+
+  &.wide-layout {
+    max-width: 1200px;
+
+    @media (max-width: 1200px) {
+      border-left: none;
+      border-right: none;
+    }
+  }
+
   @media (max-width: #{$max-width-mobile}) {
     border-left: none;
     border-right: none;
