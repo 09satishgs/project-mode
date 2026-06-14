@@ -2,6 +2,7 @@ import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "./routes/Dashboard/Dashboard";
 import Session from "./routes/Session/Session";
 import Analyse from "./routes/Analyse/Analyse";
+import Synk from "./routes/Synk/Synk";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/snapshot/:id" element={<Session />} />
           <Route path="/analyse" element={<Analyse />} />
+          <Route path="/synk" element={<Synk />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </HashRouter>

@@ -106,4 +106,23 @@ export const HEADINGS = {
     "Failed to update categorization in the database.",
   analyseToastCopied: "Link copied to clipboard!",
   analyseToastCopyFailed: "Failed to copy link: ",
+  analyseToastIDsCopied: "Copied IDs to clipboard!",
+  analyseBtnCopyIDs: "Copy IDs",
+
+  // Synk Route
+  synkTitle: "Cloud Sync",
+  synkSubtitle: "Synchronize your local database with Google Drive app data folder.",
+  synkBtnPush: "Sync to Cloud",
+  synkBtnPull: "Download from Cloud",
+  synkPushWarning: "The cloud backup is newer than your last sync. Overwriting will erase remote changes. Proceed?",
+  synkPullWarning: "Local database has newer modifications. Downloading will permanently delete local progress. Proceed?",
+  synkNoBackupFound: "No cloud backup found.",
+  synkCheckingStatus: "Checking cloud backup status...",
+  synkSuccessPush: "Successfully backed up data to Google Drive!",
+  synkSuccessPull: "Successfully restored data from Google Drive!",
+  synkStatusUpToDate: "Cloud and local databases are in sync.",
+  synkStatusLocalNewer: "Local database has unsynced changes.",
+  synkStatusCloudNewer: "Cloud backup has newer changes.",
+  synkBtnBack: "Back to Dashboard",
+  synkLogOut: "Disconnect Account",
 };

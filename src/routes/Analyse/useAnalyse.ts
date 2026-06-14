@@ -696,6 +696,26 @@ export const useAnalyse = () => {
 
   const visibleColumnsCount = Object.values(visibleColumns).filter(Boolean).length;
 
+  // Copy unique, comma-separated card IDs currently matching filters in the table
+  const copyIDs = async () => {
+    if (filtered.length === 0) return;
+    try {
+      const uniqueIds = Array.from(new Set(filtered.map((r) => r.cardId)))
+        .sort((a, b) => {
+          const numA = parseInt(a, 10);
+          const numB = parseInt(b, 10);
+          if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+          return a.localeCompare(b);
+        })
+        .join(",");
+      await navigator.clipboard.writeText(uniqueIds);
+      alert(HEADINGS.analyseToastIDsCopied);
+    } catch (err) {
+      console.error("Failed to copy IDs:", err);
+      alert("Failed to copy IDs.");
+    }
+  };
+
   return {
     completedSessions,
     selectedSessionIds,
@@ -749,5 +769,6 @@ export const useAnalyse = () => {
     filtered,
     visibleColumnsCount,
     copyShareableLink,
+    copyIDs,
   };
 };

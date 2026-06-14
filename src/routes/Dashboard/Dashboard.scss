@@ -8,6 +8,63 @@
   padding: 1.5rem 1.5rem 0 1.5rem;
   position: relative;
   background-color: $color-bg;
+
+  .floating-sync-btn {
+    position: fixed;
+    top: 1.25rem;
+    right: 1.25rem;
+    z-index: 99;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+
+    &.logged-in {
+      background: #ffffff;
+      color: #000000;
+      
+      &:hover {
+        background: #e5e5e5;
+        transform: scale(1.05);
+      }
+    }
+
+    &.logged-out {
+      background: rgba(255, 255, 255, 0.08);
+      color: $color-text-muted;
+      border-color: rgba(255, 255, 255, 0.05);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.15);
+        color: $color-white;
+        transform: scale(1.05);
+      }
+    }
+
+    .exclamation-badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      background: #ff4a4a;
+      color: #ffffff;
+      font-size: 0.65rem;
+      font-weight: 800;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid $color-bg;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+  }
 }
 
 .dashboard-header {

@@ -1,4 +1,5 @@
 import { DEX_OPTIONS } from "../constants/pokedexes";
+import { db } from "../db/db";
 
 export const getDexDisplayName = (id: string): string => {
   return DEX_OPTIONS.find((opt) => opt.id === id)?.name || id;
@@ -83,5 +84,34 @@ export const formatTime = (timestamp: number): string => {
     minute: "2-digit",
     second: "2-digit",
     hour12: false,
+  });
+};
+
+// Exports the entire Dexie database (sessions, swipeActions, and cardDetails) to JSON
+export const exportDatabase = async (): Promise<any> => {
+  const sessions = await db.sessions.toArray();
+  const swipeActions = await db.swipeActions.toArray();
+  const cardDetails = await db.cardDetails.toArray();
+  return {
+    sessions,
+    swipeActions,
+    cardDetails,
+  };
+};
+
+// Wipes current Dexie tables and imports sessions, swipeActions, and cardDetails from JSON
+export const importDatabase = async (payload: any): Promise<void> => {
+  if (!payload || !payload.sessions || !payload.swipeActions || !payload.cardDetails) {
+    throw new Error("Invalid database backup structure.");
+  }
+
+  await db.transaction("rw", [db.sessions, db.swipeActions, db.cardDetails], async () => {
+    await db.sessions.clear();
+    await db.swipeActions.clear();
+    await db.cardDetails.clear();
+
+    await db.sessions.bulkAdd(payload.sessions);
+    await db.swipeActions.bulkAdd(payload.swipeActions);
+    await db.cardDetails.bulkAdd(payload.cardDetails);
   });
 };
