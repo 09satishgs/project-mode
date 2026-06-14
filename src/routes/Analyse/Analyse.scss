@@ -227,10 +227,43 @@
     padding: 0.75rem 1rem;
   }
 
-  .results-count {
-    font-size: 0.85rem;
-    color: $color-text-secondary;
-    font-weight: 500;
+  .results-info-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .results-count {
+      font-size: 0.85rem;
+      color: $color-text-secondary;
+      font-weight: 500;
+    }
+
+    .info-separator {
+      color: $color-text-muted;
+      font-size: 0.85rem;
+    }
+
+    .copy-ids-text-btn {
+      background: transparent;
+      border: none;
+      color: $color-text-secondary;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0;
+      transition: $transition-default;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      font-family: $font-family;
+
+      &:hover {
+        color: $color-accent;
+      }
+
+      &:active {
+        opacity: 0.8;
+      }
+    }
   }
 }
 
