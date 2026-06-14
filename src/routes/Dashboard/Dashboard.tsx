@@ -16,10 +16,33 @@ export const Dashboard: React.FC = () => {
     handleDeleteSession,
     handleUploadJSON,
     navigate,
+    isSyncLoggedIn,
+    handleSyncClick,
   } = useDashboard();
 
   return (
     <div className="dashboard-view fade-in">
+      {/* Floating Sync Action Button */}
+      <button
+        className={`floating-sync-btn ${isSyncLoggedIn ? "logged-in" : "logged-out"}`}
+        onClick={handleSyncClick}
+        title="Database Synchronization"
+        aria-label="Database Synchronization"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          width="18"
+          height="18"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+        >
+          <path d="M23 4v6h-6M1 20v-6h6" />
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+        </svg>
+        {!isSyncLoggedIn && <span className="exclamation-badge">!</span>}
+      </button>
+
       <header className="dashboard-header">
         <div className="logo-container">
           <div className="logo-icon"></div>

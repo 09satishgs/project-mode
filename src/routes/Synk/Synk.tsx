@@ -1,0 +1,321 @@
+import React, { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  getStoredAuthSession,
+  clearAuthSession,
+  findSyncFile,
+  downloadSyncFile,
+  uploadSyncFile,
+} from "../../utils/gdrive";
+import { exportDatabase, importDatabase } from "../../utils/helpers";
+import { HEADINGS } from "../../constants/headings";
+import { db } from "../../db/db";
+import "./Synk.scss";
+
+type SyncStatus = "checking" | "no_backup" | "in_sync" | "local_newer" | "cloud_newer" | "error";
+
+export const Synk: React.FC = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>("checking");
+  const [cloudFile, setCloudFile] = useState<{ id: string; modifiedTime: string } | null>(null);
+  const [localSyncTime, setLocalSyncTime] = useState<number | null>(null);
+  const [localModifiedTime, setLocalModifiedTime] = useState<number>(0);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [actionInProgress, setActionInProgress] = useState<"push" | "pull" | null>(null);
+
+  const formatDateTime = (timestamp: number | null | undefined): string => {
+    if (!timestamp || timestamp === 0) return "Never";
+    return new Date(timestamp).toLocaleString(undefined, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  };
+
+  const checkSyncStatus = useCallback(async () => {
+    const session = getStoredAuthSession();
+    if (!session) {
+      navigate("/");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setErrorMsg("");
+
+      // 1. Get local modified time from IndexedDB
+      const sessions = await db.sessions.toArray();
+      const swipeActions = await db.swipeActions.toArray();
+      const maxSessionTime = sessions.reduce((max, s) => Math.max(max, s.createdAt), 0);
+      const maxActionTime = swipeActions.reduce((max, a) => Math.max(max, a.timestamp), 0);
+      const localMod = Math.max(maxSessionTime, maxActionTime);
+      setLocalModifiedTime(localMod);
+
+      // 2. Get last local sync time from localStorage
+      const storedSync = localStorage.getItem("mode_last_sync_local");
+      const lastSync = storedSync ? Number(storedSync) : 0;
+      setLocalSyncTime(lastSync > 0 ? lastSync : null);
+
+      // 3. Get remote file status
+      const fileMeta = await findSyncFile(session.accessToken);
+      setCloudFile(fileMeta);
+
+      if (!fileMeta) {
+        setSyncStatus("no_backup");
+      } else {
+        const cloudMod = new Date(fileMeta.modifiedTime).getTime();
+
+        // Check if remote or local modified times differ from sync log
+        const cloudIsNewer = cloudMod > lastSync + 5000; // 5s clock skew buffer
+        const localIsNewer = localMod > lastSync + 5000;
+
+        if (cloudIsNewer && localIsNewer) {
+          // Both changed since last sync, resolve conflict based on actual modification times
+          if (cloudMod > localMod) {
+            setSyncStatus("cloud_newer");
+          } else {
+            setSyncStatus("local_newer");
+          }
+        } else if (cloudIsNewer) {
+          setSyncStatus("cloud_newer");
+        } else if (localIsNewer) {
+          setSyncStatus("local_newer");
+        } else {
+          // If lastSync is 0 (first time syncing on this device, but backup exists)
+          if (lastSync === 0) {
+            if (cloudMod > localMod) {
+              setSyncStatus("cloud_newer");
+            } else if (localMod > cloudMod) {
+              setSyncStatus("local_newer");
+            } else {
+              setSyncStatus("in_sync");
+            }
+          } else {
+            setSyncStatus("in_sync");
+          }
+        }
+      }
+    } catch (err: any) {
+      console.error("Failed to query cloud status:", err);
+      // Handle OAuth session expiry/invalid token
+      if (err.message && err.message.includes("401")) {
+        alert("Your Google Drive session has expired. Please sign in again.");
+        clearAuthSession();
+        navigate("/");
+      } else {
+        setSyncStatus("error");
+        setErrorMsg(err.message || "An unexpected error occurred.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    checkSyncStatus();
+  }, [checkSyncStatus]);
+
+  const handlePush = async () => {
+    const session = getStoredAuthSession();
+    if (!session) {
+      navigate("/");
+      return;
+    }
+
+    // Warn if cloud file is newer
+    if (syncStatus === "cloud_newer") {
+      const confirmPush = window.confirm(HEADINGS.synkPushWarning);
+      if (!confirmPush) return;
+    }
+
+    try {
+      setActionInProgress("push");
+      const dbPayload = await exportDatabase();
+      await uploadSyncFile(session.accessToken, dbPayload, cloudFile?.id);
+
+      // Fetch file meta to retrieve the actual API-generated modifiedTime
+      const fileMeta = await findSyncFile(session.accessToken);
+      if (fileMeta) {
+        const cloudMod = new Date(fileMeta.modifiedTime).getTime();
+        localStorage.setItem("mode_last_sync_local", cloudMod.toString());
+      } else {
+        localStorage.setItem("mode_last_sync_local", Date.now().toString());
+      }
+
+      alert(HEADINGS.synkSuccessPush);
+      await checkSyncStatus();
+    } catch (err: any) {
+      console.error("Backup failed:", err);
+      alert(`Upload failed: ${err.message || err}`);
+    } finally {
+      setActionInProgress(null);
+    }
+  };
+
+  const handlePull = async () => {
+    const session = getStoredAuthSession();
+    if (!session || !cloudFile) return;
+
+    // Warn if local modifications are newer than last sync
+    const lastSync = localSyncTime || 0;
+    const localIsNewer = localModifiedTime > lastSync + 5000;
+    if (localIsNewer) {
+      const confirmPull = window.confirm(HEADINGS.synkPullWarning);
+      if (!confirmPull) return;
+    }
+
+    try {
+      setActionInProgress("pull");
+      const payload = await downloadSyncFile(session.accessToken, cloudFile.id);
+      await importDatabase(payload);
+
+      const cloudMod = new Date(cloudFile.modifiedTime).getTime();
+      localStorage.setItem("mode_last_sync_local", cloudMod.toString());
+
+      alert(HEADINGS.synkSuccessPull);
+      await checkSyncStatus();
+    } catch (err: any) {
+      console.error("Restore failed:", err);
+      alert(`Download failed: ${err.message || err}`);
+    } finally {
+      setActionInProgress(null);
+    }
+  };
+
+  const handleDisconnect = () => {
+    if (window.confirm("Are you sure you want to disconnect your Google Drive sync connection?")) {
+      clearAuthSession();
+      navigate("/");
+    }
+  };
+
+  return (
+    <div className="synk-view fade-in">
+      <header className="synk-header">
+        <button
+          className="back-btn"
+          onClick={() => navigate("/")}
+          title={HEADINGS.synkBtnBack}
+          aria-label={HEADINGS.synkBtnBack}
+        >
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <line x1="19" y1="12" x2="5" y2="12" />
+            <polyline points="12 19 5 12 12 5" />
+          </svg>
+        </button>
+        <h1>{HEADINGS.synkTitle}</h1>
+        <p className="subtitle">{HEADINGS.synkSubtitle}</p>
+      </header>
+
+      <main className="synk-content">
+        <section className="status-card">
+          <h2>Cloud Connection & Status</h2>
+
+          {loading ? (
+            <div className="status-loader">
+              <span className="spinner"></span>
+              <span>{HEADINGS.synkCheckingStatus}</span>
+            </div>
+          ) : (
+            <div className="status-details">
+              <div className="status-row">
+                <span className="label">Sync State</span>
+                <span className={`badge badge-${syncStatus}`}>
+                  {syncStatus === "no_backup" && HEADINGS.synkNoBackupFound}
+                  {syncStatus === "in_sync" && HEADINGS.synkStatusUpToDate}
+                  {syncStatus === "local_newer" && HEADINGS.synkStatusLocalNewer}
+                  {syncStatus === "cloud_newer" && HEADINGS.synkStatusCloudNewer}
+                  {syncStatus === "error" && "Sync Error"}
+                </span>
+              </div>
+
+              {syncStatus === "error" && (
+                <div className="error-alert">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>
+                  <span>{errorMsg}</span>
+                </div>
+              )}
+
+              <div className="detail-item">
+                <span className="label">Last Local Modification</span>
+                <span className="value">{formatDateTime(localModifiedTime)}</span>
+              </div>
+
+              <div className="detail-item">
+                <span className="label">Last Sync Complete</span>
+                <span className="value">{formatDateTime(localSyncTime)}</span>
+              </div>
+
+              <div className="detail-item">
+                <span className="label">Cloud Backup Modified</span>
+                <span className="value">
+                  {cloudFile ? formatDateTime(new Date(cloudFile.modifiedTime).getTime()) : "Never"}
+                </span>
+              </div>
+            </div>
+          )}
+        </section>
+
+        <section className="sync-actions-section">
+          <button
+            className="btn-primary push-btn"
+            onClick={handlePush}
+            disabled={loading || actionInProgress !== null}
+          >
+            {actionInProgress === "push" ? (
+              <>
+                <span className="spinner"></span> Backing up...
+              </>
+            ) : (
+              <>
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
+                {HEADINGS.synkBtnPush}
+              </>
+            )}
+          </button>
+
+          <button
+            className="btn-secondary pull-btn"
+            onClick={handlePull}
+            disabled={loading || !cloudFile || actionInProgress !== null}
+          >
+            {actionInProgress === "pull" ? (
+              <>
+                <span className="spinner"></span> Downloading...
+              </>
+            ) : (
+              <>
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                {HEADINGS.synkBtnPull}
+              </>
+            )}
+          </button>
+        </section>
+      </main>
+
+      <footer className="synk-footer">
+        <button className="disconnect-btn" onClick={handleDisconnect}>
+          {HEADINGS.synkLogOut}
+        </button>
+      </footer>
+    </div>
+  );
+};
+
+export default Synk;

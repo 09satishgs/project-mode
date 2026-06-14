@@ -4,6 +4,7 @@ import { db } from "../../db/db";
 import type { SessionMetadata } from "../../db/types";
 import { generateUUID } from "../../utils/helpers";
 import { HEADINGS } from "../../constants/headings";
+import { getStoredAuthSession, authenticateGoogle } from "../../utils/gdrive";
 
 export interface SessionWithProgress extends SessionMetadata {
   swipedCount: number;
@@ -158,6 +159,30 @@ export const useDashboard = () => {
     }
   };
 
+  const [isSyncLoggedIn, setIsSyncLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setIsSyncLoggedIn(getStoredAuthSession() !== null);
+  }, []);
+
+  const handleSyncClick = () => {
+    const session = getStoredAuthSession();
+    if (session) {
+      navigate("/synk");
+    } else {
+      alert("In order to sync your data across multiple devices, you need to sign in with Google.");
+      authenticateGoogle(
+        () => {
+          setIsSyncLoggedIn(true);
+          navigate("/synk");
+        },
+        (err) => {
+          console.error("Google Auth failed:", err);
+        }
+      );
+    }
+  };
+
   const inProgressSessions = sessions.filter((s) => s.status === "in-progress");
   const completedSessions = sessions.filter((s) => s.status === "completed");
 
@@ -172,5 +197,7 @@ export const useDashboard = () => {
     handleDeleteSession,
     handleUploadJSON,
     navigate,
+    isSyncLoggedIn,
+    handleSyncClick,
   };
 };

@@ -1,0 +1,297 @@
+@import "../../styles/variables";
+@import "../../styles/mixins";
+
+.synk-view {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 1.5rem 1.5rem 0 1.5rem;
+  position: relative;
+  background-color: $color-bg;
+  animation: fadeIn 0.4s ease-out;
+
+  .synk-header {
+    position: relative;
+    text-align: center;
+    margin-bottom: 2rem;
+
+    .back-btn {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      color: $color-text-secondary;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: $transition-default;
+
+      &:hover {
+        color: $color-text-primary;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      &:active {
+        transform: translateY(-50%) scale(0.95);
+      }
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: $color-text-primary;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: $color-text-secondary;
+      margin-top: 0.25rem;
+      line-height: 1.4;
+    }
+  }
+
+  .synk-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    flex-grow: 1;
+    max-width: $max-width-mobile;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .status-card {
+    @include card-base;
+    background: rgba($color-bg-card, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: $shadow-card;
+
+    h2 {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: $color-text-secondary;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid $color-border;
+      padding-bottom: 0.5rem;
+    }
+
+    .status-loader {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 2rem 0;
+      color: $color-text-secondary;
+      font-size: 0.95rem;
+
+      .spinner {
+        width: 18px;
+        height: 18px;
+        border: 2px solid rgba($color-accent, 0.2);
+        border-top-color: $color-accent;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+    }
+
+    .status-details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid $color-border;
+
+      .label {
+        font-weight: 600;
+        color: $color-text-primary;
+      }
+
+      .badge {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 0.25rem 0.6rem;
+        border-radius: 6px;
+
+        &.badge-checking {
+          background: rgba(255, 255, 255, 0.05);
+          color: $color-text-secondary;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        &.badge-no_backup {
+          background: rgba(245, 158, 11, 0.1);
+          color: #f59e0b;
+          border: 1px solid rgba(#f59e0b, 0.3);
+        }
+
+        &.badge-in_sync {
+          background: rgba(16, 185, 129, 0.1);
+          color: #10b981;
+          border: 1px solid rgba(#10b981, 0.3);
+        }
+
+        &.badge-local_newer {
+          background: rgba(239, 68, 68, 0.1);
+          color: #ff5a5a;
+          border: 1px solid rgba(#ff5a5a, 0.3);
+        }
+
+        &.badge-cloud_newer {
+          background: rgba(59, 130, 246, 0.1);
+          color: #3b82f6;
+          border: 1px solid rgba(#3b82f6, 0.3);
+        }
+
+        &.badge-error {
+          background: rgba(239, 68, 68, 0.1);
+          color: #ef4444;
+          border: 1px solid rgba(#ef4444, 0.3);
+        }
+      }
+    }
+
+    .error-alert {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      background: rgba(#ef4444, 0.1);
+      border: 1px solid rgba(#ef4444, 0.2);
+      border-radius: 8px;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      color: #ff6b6b;
+      font-size: 0.85rem;
+
+      svg {
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+    }
+
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.6rem 0;
+      font-size: 0.85rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+
+      &:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+
+      .label {
+        color: $color-text-secondary;
+      }
+
+      .value {
+        color: $color-text-primary;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .sync-actions-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+
+    button {
+      width: 100%;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      border-radius: 12px;
+      font-size: 0.95rem;
+
+      &:active {
+        transform: scale(0.98);
+      }
+
+      .spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid currentColor;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+    }
+
+    .push-btn {
+      @include button-primary;
+      box-shadow: 0 8px 20px rgba($color-accent, 0.15);
+    }
+
+    .pull-btn {
+      @include button-secondary;
+      background: rgba($color-bg-card, 0.5);
+      border: 1px solid $color-border;
+    }
+  }
+
+  .synk-footer {
+    margin-top: auto;
+    padding: 2.5rem 0;
+    display: flex;
+    justify-content: center;
+
+    .disconnect-btn {
+      background: transparent;
+      border: none;
+      color: rgba($color-accent, 0.8);
+      cursor: pointer;
+      font-family: $font-family;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: $transition-default;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+
+      &:hover {
+        color: $color-accent;
+        background: rgba($color-accent, 0.08);
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

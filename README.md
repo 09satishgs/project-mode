@@ -24,10 +24,12 @@
 - [Product Snapshot](#product-snapshot)
 - [Screenshots & UI Previews](#screenshots--ui-previews)
 - [Feature Overview](#feature-overview)
+- [V2.0.0 Significant Changes & Quality of Life (QoL) Updates](#v200-significant-changes--quality-of-life-qol-updates)
 - [How The System Works](#how-the-system-works)
 - [Application Features Tree](#application-features-tree)
 - [Data Models (Dexie Schema)](#data-models-dexie-schema)
 - [Example Use Case: Cross-Game Synchronization](#example-use-case-cross-game-synchronization)
+- [Google Drive Cloud Synchronization (Optional Testing Feature)](#google-drive-cloud-synchronization-optional--testing-feature)
 - [Local Development](#local-development)
 - [Tech Stack](#tech-stack)
 
@@ -208,6 +210,25 @@ The spreadsheet dynamically filters down to show you only the Pokémon that are 
 
 ---
 
+## 🚀 V2.0.0 Significant Changes & Quality of Life (QoL) Updates
+
+M.O.D.E. V2.0.0 introduces major visual upgrades, multi-device syncing, spreadsheet layouts, and user experience enhancements:
+
+1.  **Tabular vs. List View Toggle:** Added a View Mode button to the Analysis spreadsheet toolbar, enabling instant toggle between a traditional grid table and a responsive, mobile-optimized Card List layout.
+2.  **Compact Pokémon Thumbnails:** Integrates sprite previews in both views:
+    *   **Table View:** Inline `24px` mini-sprites inside the Pokémon name cell that fit within the default row height.
+    *   **List/Card View:** Vertical centered `56px` sprite artwork next to the Pokémon ID, name, and categorization badge.
+3.  **Copy IDs Link:** Added a clipboard export feature for filtered IDs. `Showing {x} entries · Copy IDs`. Tapping this copies all unique, sorted, comma-separated card IDs currently shown in the table (post-filtering) to the clipboard. Users can paste this string directly in Pokemon Go storage searchbox to get list of all available pokemon matching any of the IDs.
+4.  **Google Drive Cloud Sync:** Optional and secure database backups across devices using native client REST calls to the Google Drive `appDataFolder` (see [Google Drive Cloud Synchronization](#google-drive-cloud-synchronization-optional--testing-feature)).
+5.  **JSON Containment Protection:** Prevents wide raw JSON data blocks from expanding card elements beyond the mobile screen width. It enforces a strict max-width (`280px` to `345px`) and enables horizontal scrolling for nested tree nodes.
+6.  **Saved Queries & Share Links:**
+    *   **Saved Queries:** Save complex visual query block layouts directly to `localStorage` for quick re-hydration.
+    *   **Share Links:** Instantly share query filters with others via Base64 URL parameter serialization (`copyShareableLink`).
+7.  **Adaptive Gesture Panel:** The swiping dashboard dynamically adapts its layout depending on active configurations, formatting between 2 and 5 action buttons cleanly in rows or grids.
+8.  **Vite PWA & Vercel Subpath rewrites:** Configured vite base paths and Vercel CDNs rewrite mappings to serve the PWA under subpath folders `/project-mode/` for production deployments.
+
+---
+
 ## How The System Works
 
 ### 1. Data Source & Pokedex Caching
@@ -314,6 +335,27 @@ Stores the complete Pokémon information JSON object returned by the PokeAPI ada
 - `sessionId` (indexed string)
 - `cardId` (string)
 - `details` (nested Pokémon properties JSON object)
+
+---
+
+## 💾 Google Drive Cloud Synchronization (Optional & Testing Feature)
+
+M.O.D.E. supports optional, client-side cloud backup and recovery using your personal Google Drive application storage (`appDataFolder`). This enables syncing your Pokédex database history across multiple devices (e.g., phone, tablet, and PC) without intermediate servers or databases.
+
+### 🧪 Important: Testing Mode & Opt-In Instructions
+
+Because M.O.D.E. is a private PWA and requests a restricted scope (`drive.appdata` to read and write its backup file), the Google OAuth Consent screen runs in **Testing Mode**.
+
+*   **Access is Manual:** Only pre-approved Google accounts can use the Sync feature. If you want to use the cloud sync feature, please **[Send a request to the developer](mailto:satis@satish.com?subject=M.O.D.E.%20Google%20Sync%20Access%20Request)** with your Google account email to be added to the whitelist.
+*   **Bypassing the Warning Page:** When logging in, Google will show a warning screen stating: *"Google hasn't verified this app."* 
+    > [!NOTE]
+    > **This warning is completely safe to bypass.** Because the app is in testing mode and self-hosted, Google has not run its commercial security audit. Click on **Advanced** (or *Show Advanced*) and click **Go to projects.satishg.in (unsafe)** to proceed. The app only accesses its private, hidden `appDataFolder` and cannot see or touch any of your personal Google Drive files.
+
+### How it Works
+*   **Push (Sync to Cloud):** Packages your local IndexedDB tables (`sessions`, `swipeActions`, `cardDetails`), uploads them as a JSON backup, and registers the sync timestamp.
+*   **Pull (Download from Cloud):** Clears the local database and restores the complete remote backup in a single safe database transaction.
+*   **Conflict Checks:** If you push when the cloud file is newer, or pull when your local changes are newer, the app prompts you with a confirmation warning to prevent accidental data loss.
+*   **Disconnect Button:** Easily disconnect your Google credentials at any time.
 
 ---
 
