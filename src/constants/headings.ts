@@ -29,8 +29,8 @@ export const HEADINGS = {
   errorFetchFailed: "Failed to fetch Dex data. Please check your connection.",
 
   // Dashboard Text & Info
-  dashboardTitle: "M.O.D.E.",
-  dashboardSubtitle: "Mobile Optimized Dex Entry",
+  dashboardTitle: "Poke-Mode",
+  dashboardSubtitle: "Pokémon Mobile Optimised Dex Entry",
   sectionInProgress: "In Progress",
   sectionCompleted: "Completed",
   loadingSessions: "Loading sessions...",
@@ -111,11 +111,14 @@ export const HEADINGS = {
 
   // Synk Route
   synkTitle: "Cloud Sync",
-  synkSubtitle: "Synchronize your local database with Google Drive app data folder.",
+  synkSubtitle:
+    "Synchronize your local database with Google Drive app data folder.",
   synkBtnPush: "Sync to Cloud",
   synkBtnPull: "Download from Cloud",
-  synkPushWarning: "The cloud backup is newer than your last sync. Overwriting will erase remote changes. Proceed?",
-  synkPullWarning: "Local database has newer modifications. Downloading will permanently delete local progress. Proceed?",
+  synkPushWarning:
+    "The cloud backup is newer than your last sync. Overwriting will erase remote changes. Proceed?",
+  synkPullWarning:
+    "Local database has newer modifications. Downloading will permanently delete local progress. Proceed?",
   synkNoBackupFound: "No cloud backup found.",
   synkCheckingStatus: "Checking cloud backup status...",
   synkSuccessPush: "Successfully backed up data to Google Drive!",
