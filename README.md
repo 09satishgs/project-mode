@@ -1,7 +1,7 @@
-# Mobile Optimized Dex Entry (M.O.D.E.)
+# Poke-Mode (Pokémon Mobile Optimised Dex Entry)
 
 > [!IMPORTANT]
-> M.O.D.E. is a progressive web app designed for Pokémon collectors to rapidly categorize Pokedex checklists (regional or national) using a physics-driven swipe deck interface, featuring offline persistence, custom multi-gesture configurations, and a comprehensive spreadsheet analysis engine.
+> Poke-Mode is a progressive web app designed for Pokémon collectors to rapidly categorize Pokedex checklists (regional or national) using a physics-driven swipe deck interface, featuring offline persistence, custom multi-gesture configurations, and a comprehensive spreadsheet analysis engine.
 
 <p align="center">
   <strong>Offline-first Dex entry</strong> &bull;
@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <strong>Live URL:</strong> <a href="https://projects.satish.com/project-mode">projects.satish.com/project-mode</a>
+  <strong>Live URL:</strong> <a href="https://projects.satishg.in/pokemode">projects.satishg.in/pokemode</a>
 </p>
 
 ---
@@ -28,8 +28,9 @@
 - [How The System Works](#how-the-system-works)
 - [Application Features Tree](#application-features-tree)
 - [Data Models (Dexie Schema)](#data-models-dexie-schema)
-- [Example Use Case: Cross-Game Synchronization](#example-use-case-cross-game-synchronization)
-- [Google Drive Cloud Synchronization (Optional Testing Feature)](#google-drive-cloud-synchronization-optional--testing-feature)
+- [Example Use Case 1: Cross-Game Synchronization](#example-use-case-cross-game-synchronization)
+- [Example Use Case 2: Two-Player Trade Coordination](#example-use-case-two-player-trade-coordination)
+- [Google Drive Cloud Synchronization (Optional & Testing Feature)](#google-drive-cloud-synchronization-optional--testing-feature)
 - [Local Development](#local-development)
 - [Tech Stack](#tech-stack)
 
@@ -39,9 +40,9 @@
 
 For players managing collections across multiple Pokémon Switch titles, Pokémon GO, and Pokémon HOME, tracking progress is a fragmented mess. Each game hosts its own regional or national Pokédex, while Pokémon HOME tracks each game's dex separately alongside its own National Dex. Spread across different consoles and systems, it is impossible to perform even basic cross-game queries—such as identifying which Pokémon currently in your Pokémon GO dex are still missing from your Pokémon HOME GO dex.
 
-**M.O.D.E. (Mobile Optimized Dex Entry)** consolidates all of your Pokédexes into a single, unified local database. By doing so, you can filter and analyze cross-game gaps to see exactly which Pokédexes you can complete right now by simply moving your Pokémon around.
+**Poke-Mode (Pokémon Mobile Optimised Dex Entry)** consolidates all of your Pokédexes into a single, unified local database. By doing so, you can filter and analyze cross-game gaps to see exactly which Pokédexes you can complete right now by simply moving your Pokémon around.
 
-To make the entry process fast and seamless on mobile, M.O.D.E. replaces tedious spreadsheets with a physics-driven swipe deck:
+To make the entry process fast and seamless on mobile, Poke-Mode replaces tedious spreadsheets with a physics-driven swipe deck:
 
 - **Rapid Swiping:** Swipe cards left, right, up, or down, or double-click to categorize entries in milliseconds.
 - **Custom Gestures:** Define what each swipe direction means (e.g. Left = *Caught*, Right = *Missing*, Up = *To Evolve*, Down = *Trade*).
@@ -115,6 +116,77 @@ Here is a step-by-step example of how to solve the common challenge of finding t
 
 ### The Result
 The spreadsheet dynamically filters down to show you only the Pokémon that are **Caught in Pokémon GO** but are **Missing in Pokémon HOME**. You can now use this exact list of names and ID numbers to transfer those specific Pokémon from your GO app to your HOME storage to complete your Pokedex!
+
+## 💡 Example Use Case: Two-Player Trade Coordination
+
+You and a friend can coordinate Pokémon trades completely offline using Poke-Mode's export, import, and visual intersection queries.
+
+### Step 1: Set up trade lists (Both Players)
+1. Both players create a new snapshot titled `My_Trade_List` (selecting the National Dex or a regional Dex).
+2. Configure your custom gestures:
+   - **Left Swipe:** `Can Trade`
+   - **Up Swipe:** `Want this`
+3. Swipe through the deck:
+   - Swipe **Left** for Pokémon you own and are willing to trade.
+   - Swipe **Up** for Pokémon you want to receive.
+4. Export your session: Click **Export** on the Completed dashboard section. This saves a local JSON file (e.g., `My_Trade_List_snapshot.json`).
+
+### Step 2: Exchange and Import snapshots
+1. Exchange your exported JSON files (via email, messaging, etc.).
+2. Person A uploads Person B's JSON file on the Dashboard. It imports as a completed session: `B's Trade List (Imported)`.
+3. Person B uploads Person A's JSON file similarly.
+
+### Step 3: Run the trade intersection query (Person A's perspective)
+1. Go to the **Analyse** tab.
+2. Select both completed snapshots: `My_Trade_List` and `B's Trade List (Imported)`.
+3. Open the **Visual Query Builder** (grid block icon in top-right) and set up the relation:
+   - **Block 1:** Select `My_Trade_List` and check **Want this**.
+   - **Connector:** Set relation to **INTERSECT**.
+   - **Block 2:** Select `B's Trade List (Imported)` and check **Can Trade**.
+4. Click **Apply Query**.
+
+### The Result
+The spreadsheet filters down to display only the Pokémon that **Person A wants** and **Person B is offering to trade**. Click **Copy IDs** next to the results count, send the comma-separated ID list to your friend, and start trading!
+
+### Trade Coordination Flow Diagram
+
+```mermaid
+graph TD
+    subgraph Setup ["1. Setup & Swiping (Both Players)"]
+        A_Swipe["Person A swipes:<br>• Left: 'Can Trade'<br>• Up: 'Want this'"]
+        B_Swipe["Person B swipes:<br>• Left: 'Can Trade'<br>• Up: 'Want this'"]
+    end
+
+    subgraph Swap ["2. Export & Exchange JSON"]
+        A_Export["Person A exports JSON"]
+        B_Export["Person B exports JSON"]
+        A_Import["Person A uploads B's JSON<br>(Imported Snapshot)"]
+        B_Import["Person B uploads A's JSON<br>(Imported Snapshot)"]
+        
+        A_Export --> B_Import
+        B_Export --> A_Import
+    end
+
+    subgraph Query ["3. Cross-Reference in Analyse Tab"]
+        Select["Select both snapshots:<br>1. 'My_Trade_List' (Local)<br>2. 'B's Trades' (Imported)"]
+        Block1["Block 1: My_Trade_List<br>Status = 'Want this'"]
+        Block2["Block 2: B's Trades<br>Status = 'Can Trade'"]
+        Relation["Relation: INTERSECT"]
+        
+        Select --> Block1
+        Select --> Block2
+        Block1 --> Relation
+        Block2 --> Relation
+    end
+
+    subgraph Result ["4. Output Matches"]
+        List["Table displays matching Pokémon:<br>• Person A wants them<br>• Person B is offering them"]
+        Copy["Click 'Copy IDs' or 'Export' to send deal list!"]
+        
+        Relation --> List
+        List --> Copy
+    end
+```
 
 ---
 
@@ -212,7 +284,7 @@ The spreadsheet dynamically filters down to show you only the Pokémon that are 
 
 ## 🚀 V2.0.0 Significant Changes & Quality of Life (QoL) Updates
 
-M.O.D.E. V2.0.0 introduces major visual upgrades, multi-device syncing, spreadsheet layouts, and user experience enhancements:
+Poke-Mode V2.0.0 introduces major visual upgrades, multi-device syncing, spreadsheet layouts, and user experience enhancements:
 
 1.  **Tabular vs. List View Toggle:** Added a View Mode button to the Analysis spreadsheet toolbar, enabling instant toggle between a traditional grid table and a responsive, mobile-optimized Card List layout.
 2.  **Compact Pokémon Thumbnails:** Integrates sprite previews in both views:
@@ -225,7 +297,7 @@ M.O.D.E. V2.0.0 introduces major visual upgrades, multi-device syncing, spreadsh
     *   **Saved Queries:** Save complex visual query block layouts directly to `localStorage` for quick re-hydration.
     *   **Share Links:** Instantly share query filters with others via Base64 URL parameter serialization (`copyShareableLink`).
 7.  **Adaptive Gesture Panel:** The swiping dashboard dynamically adapts its layout depending on active configurations, formatting between 2 and 5 action buttons cleanly in rows or grids.
-8.  **Vite PWA & Vercel Subpath rewrites:** Configured vite base paths and Vercel CDNs rewrite mappings to serve the PWA under subpath folders `/project-mode/` for production deployments.
+8.  **Vite PWA & Vercel Subpath rewrites:** Configured vite base paths and Vercel CDNs rewrite mappings to serve the PWA under subpath folders `/pokemode/` for production deployments.
 
 ---
 
@@ -262,7 +334,7 @@ const joinedRecords = actions.map(act => {
 This maps raw directions (left, right, etc.) to user-defined session titles on-the-fly, allowing a single view to display combined stats.
 
 ### 4. Lazy Rendering (Infinite Scroll) for Viewport Optimization
-To support smooth scrolling on low-end mobile devices when joining massive Pokedex lists, M.O.D.E. implements dynamic lazy rendering (commonly known as **infinite scrolling**):
+To support smooth scrolling on low-end mobile devices when joining massive Pokedex lists, Poke-Mode implements dynamic lazy rendering (commonly known as **infinite scrolling**):
 - **Pagination Chunking:** The analysis spreadsheet initializes with a slice of the first 50 matched Pokémon.
 - **Sentinel Intersection Observation:** A bottom-aligned placeholder element acts as a scroll sentinel. An `IntersectionObserver` detects when this sentinel enters the visible viewport.
 - **Dynamic Sentinel Binding:** To avoid stale closure reference issues when applying custom filter sets or query parameters, a React callback ref (`sentinelRef`) is utilized to disconnect and reconnect the observer dynamically to the correct sentinel node.
@@ -273,11 +345,11 @@ To support smooth scrolling on low-end mobile devices when joining massive Poked
 
 ## 🌳 Application Features Tree
 
-The following flowchart maps M.O.D.E.'s main features across its three primary functional screens:
+The following flowchart maps Poke-Mode's main features across its three primary functional screens:
 
 ```mermaid
 graph TD
-    App([M.O.D.E. PWA]) --> Dash[1. Dashboard Screen]
+    App([Poke-Mode PWA]) --> Dash[1. Dashboard Screen]
     App --> Analyse[2. Analyse Screen]
     App --> NewSnap[3. New Snapshot Screen]
 
@@ -340,13 +412,13 @@ Stores the complete Pokémon information JSON object returned by the PokeAPI ada
 
 ## 💾 Google Drive Cloud Synchronization (Optional & Testing Feature)
 
-M.O.D.E. supports optional, client-side cloud backup and recovery using your personal Google Drive application storage (`appDataFolder`). This enables syncing your Pokédex database history across multiple devices (e.g., phone, tablet, and PC) without intermediate servers or databases.
+Poke-Mode supports optional, client-side cloud backup and recovery using your personal Google Drive application storage (`appDataFolder`). This enables syncing your Pokédex database history across multiple devices (e.g., phone, tablet, and PC) without intermediate servers or databases.
 
 ### 🧪 Important: Testing Mode & Opt-In Instructions
 
-Because M.O.D.E. is a private PWA and requests a restricted scope (`drive.appdata` to read and write its backup file), the Google OAuth Consent screen runs in **Testing Mode**.
+Because Poke-Mode is a private PWA and requests a restricted scope (`drive.appdata` to read and write its backup file), the Google OAuth Consent screen runs in **Testing Mode**.
 
-*   **Access is Manual:** Only pre-approved Google accounts can use the Sync feature. If you want to use the cloud sync feature, please **[Send a request to the developer](mailto:satis@satish.com?subject=M.O.D.E.%20Google%20Sync%20Access%20Request)** with your Google account email to be added to the whitelist.
+*   **Access is Manual:** Only pre-approved Google accounts can use the Sync feature. If you want to use the cloud sync feature, please **[Send a request to the developer](mailto:satis@satish.com?subject=Poke-Mode%20Google%20Sync%20Access%20Request)** with your Google account email to be added to the whitelist.
 *   **Bypassing the Warning Page:** When logging in, Google will show a warning screen stating: *"Google hasn't verified this app."* 
     > [!NOTE]
     > **This warning is completely safe to bypass.** Because the app is in testing mode and self-hosted, Google has not run its commercial security audit. Click on **Advanced** (or *Show Advanced*) and click **Go to projects.satishg.in (unsafe)** to proceed. The app only accesses its private, hidden `appDataFolder` and cannot see or touch any of your personal Google Drive files.

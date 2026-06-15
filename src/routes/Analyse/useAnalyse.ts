@@ -2,7 +2,11 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { db } from "../../db/db";
 import type { SessionMetadata } from "../../db/types";
-import { getNestedValue, deepSearch, downloadJsonFile } from "../../utils/helpers";
+import {
+  getNestedValue,
+  deepSearch,
+  downloadJsonFile,
+} from "../../utils/helpers";
 import { HEADINGS } from "../../constants/headings";
 
 export type QueryRelation = "INTERSECT" | "UNION" | "DIFFERENCE";
@@ -22,7 +26,9 @@ export interface JoinedRecord {
 
 export const useAnalyse = () => {
   // Completed sessions list for selection filter
-  const [completedSessions, setCompletedSessions] = useState<SessionMetadata[]>([]);
+  const [completedSessions, setCompletedSessions] = useState<SessionMetadata[]>(
+    [],
+  );
   const [selectedSessionIds, setSelectedSessionIds] = useState<string[]>([]);
   const [joinedRecords, setJoinedRecords] = useState<JoinedRecord[]>([]);
 
@@ -31,7 +37,9 @@ export const useAnalyse = () => {
   const [nestedQuery, setNestedQuery] = useState("");
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
   const [availableLabels, setAvailableLabels] = useState<string[]>([]);
-  const [sortField, setSortField] = useState<"cardId" | "name" | "label" | "timestamp">("timestamp");
+  const [sortField, setSortField] = useState<
+    "cardId" | "name" | "label" | "timestamp"
+  >("timestamp");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   // Expanded row tracking (Map of row ID -> boolean)
@@ -53,7 +61,9 @@ export const useAnalyse = () => {
   >([{ id: "block-1", sessionIds: [], labels: [] }]);
   const [queryRelations, setQueryRelations] = useState<QueryRelation[]>([]);
   const [blockCounts, setBlockCounts] = useState<Record<string, number>>({});
-  const [queryBuilderRecords, setQueryBuilderRecords] = useState<JoinedRecord[]>([]);
+  const [queryBuilderRecords, setQueryBuilderRecords] = useState<
+    JoinedRecord[]
+  >([]);
   const [savedQueries, setSavedQueries] = useState<
     Array<{ id: string; name: string; blocks: any[]; relations: any[] }>
   >([]);
@@ -694,7 +704,8 @@ export const useAnalyse = () => {
     }
   };
 
-  const visibleColumnsCount = Object.values(visibleColumns).filter(Boolean).length;
+  const visibleColumnsCount =
+    Object.values(visibleColumns).filter(Boolean).length;
 
   // Copy unique, comma-separated card IDs currently matching filters in the table
   const copyIDs = async () => {

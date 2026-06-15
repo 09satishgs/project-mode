@@ -5,15 +5,15 @@ import { VitePWA } from "vite-plugin-pwa";
 // https://vite.dev/config/
 export default defineConfig(({ command }) => {
   return {
-    base: command === "build" ? "/project-mode/" : "/",
+    base: command === "build" ? "/pokemode/" : "/",
     plugins: [
       react(),
     VitePWA({
       registerType: "autoUpdate",
       includeAssets: ["favicon.svg"],
       manifest: {
-        name: "Mobile Optimized Dex Entry",
-        short_name: "M.O.D.E.",
+        name: "Pokémon Mobile Optimised Dex Entry",
+        short_name: "Poke-Mode",
         description:
           "Rapid categorization interface for Pokemon utilizing Tinder-swipe controls.",
         theme_color: "#0a0a0a",

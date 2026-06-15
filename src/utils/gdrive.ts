@@ -25,7 +25,10 @@ export const getStoredAuthSession = (): AuthSession | null => {
   }
 };
 
-export const storeAuthSession = (accessToken: string, expiresInSeconds: number): void => {
+export const storeAuthSession = (
+  accessToken: string,
+  expiresInSeconds: number,
+): void => {
   const session: AuthSession = {
     accessToken,
     expiresAt: Date.now() + expiresInSeconds * 1000,
@@ -40,7 +43,7 @@ export const clearAuthSession = (): void => {
 // Trigger Google OAuth implicit grant flow popup
 export const authenticateGoogle = (
   onSuccess: (token: string) => void,
-  onFailure?: (err: any) => void
+  onFailure?: (err: any) => void,
 ): void => {
   const google = (window as any).google;
   if (!google || !google.accounts || !google.accounts.oauth2) {
@@ -79,9 +82,11 @@ export const authenticateGoogle = (
 
 // Google Drive API: Search for sync file in appDataFolder
 export const findSyncFile = async (
-  token: string
+  token: string,
 ): Promise<{ id: string; modifiedTime: string } | null> => {
-  const query = encodeURIComponent(`name = '${SYNC_FILE_NAME}' and parents in 'appDataFolder'`);
+  const query = encodeURIComponent(
+    `name = '${SYNC_FILE_NAME}' and parents in 'appDataFolder'`,
+  );
   const url = `https://www.googleapis.com/drive/v3/files?q=${query}&spaces=appDataFolder&fields=files(id,modifiedTime)`;
 
   const res = await fetch(url, {
@@ -113,7 +118,10 @@ export const findSyncFile = async (
 };
 
 // Google Drive API: Download backup file content
-export const downloadSyncFile = async (token: string, fileId: string): Promise<any> => {
+export const downloadSyncFile = async (
+  token: string,
+  fileId: string,
+): Promise<any> => {
   const url = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`;
 
   const res = await fetch(url, {
@@ -131,7 +139,9 @@ export const downloadSyncFile = async (token: string, fileId: string): Promise<a
     } catch {
       details = res.statusText;
     }
-    throw new Error(`Google Drive API Download Failed: ${res.status} ${details}`);
+    throw new Error(
+      `Google Drive API Download Failed: ${res.status} ${details}`,
+    );
   }
 
   return await res.json();
@@ -141,7 +151,7 @@ export const downloadSyncFile = async (token: string, fileId: string): Promise<a
 export const uploadSyncFile = async (
   token: string,
   dbPayload: any,
-  fileId?: string
+  fileId?: string,
 ): Promise<string> => {
   const fileContent = JSON.stringify(dbPayload);
 
@@ -165,14 +175,17 @@ export const uploadSyncFile = async (
       } catch {
         details = res.statusText;
       }
-      throw new Error(`Google Drive API Update Failed: ${res.status} ${details}`);
+      throw new Error(
+        `Google Drive API Update Failed: ${res.status} ${details}`,
+      );
     }
 
     const data = await res.json();
     return data.id || fileId;
   } else {
     // CREATE new file (Multipart Upload)
-    const url = "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart";
+    const url =
+      "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart";
     const metadata = {
       name: SYNC_FILE_NAME,
       parents: ["appDataFolder"],
@@ -208,7 +221,9 @@ export const uploadSyncFile = async (
       } catch {
         details = res.statusText;
       }
-      throw new Error(`Google Drive API Creation Failed: ${res.status} ${details}`);
+      throw new Error(
+        `Google Drive API Creation Failed: ${res.status} ${details}`,
+      );
     }
 
     const data = await res.json();

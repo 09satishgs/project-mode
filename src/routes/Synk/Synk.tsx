@@ -12,17 +12,28 @@ import { HEADINGS } from "../../constants/headings";
 import { db } from "../../db/db";
 import "./Synk.scss";
 
-type SyncStatus = "checking" | "no_backup" | "in_sync" | "local_newer" | "cloud_newer" | "error";
+type SyncStatus =
+  | "checking"
+  | "no_backup"
+  | "in_sync"
+  | "local_newer"
+  | "cloud_newer"
+  | "error";
 
 export const Synk: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>("checking");
-  const [cloudFile, setCloudFile] = useState<{ id: string; modifiedTime: string } | null>(null);
+  const [cloudFile, setCloudFile] = useState<{
+    id: string;
+    modifiedTime: string;
+  } | null>(null);
   const [localSyncTime, setLocalSyncTime] = useState<number | null>(null);
   const [localModifiedTime, setLocalModifiedTime] = useState<number>(0);
   const [errorMsg, setErrorMsg] = useState("");
-  const [actionInProgress, setActionInProgress] = useState<"push" | "pull" | null>(null);
+  const [actionInProgress, setActionInProgress] = useState<
+    "push" | "pull" | null
+  >(null);
 
   const formatDateTime = (timestamp: number | null | undefined): string => {
     if (!timestamp || timestamp === 0) return "Never";
@@ -50,8 +61,14 @@ export const Synk: React.FC = () => {
       // 1. Get local modified time from IndexedDB
       const sessions = await db.sessions.toArray();
       const swipeActions = await db.swipeActions.toArray();
-      const maxSessionTime = sessions.reduce((max, s) => Math.max(max, s.createdAt), 0);
-      const maxActionTime = swipeActions.reduce((max, a) => Math.max(max, a.timestamp), 0);
+      const maxSessionTime = sessions.reduce(
+        (max, s) => Math.max(max, s.createdAt),
+        0,
+      );
+      const maxActionTime = swipeActions.reduce(
+        (max, a) => Math.max(max, a.timestamp),
+        0,
+      );
       const localMod = Math.max(maxSessionTime, maxActionTime);
       setLocalModifiedTime(localMod);
 
@@ -187,7 +204,11 @@ export const Synk: React.FC = () => {
   };
 
   const handleDisconnect = () => {
-    if (window.confirm("Are you sure you want to disconnect your Google Drive sync connection?")) {
+    if (
+      window.confirm(
+        "Are you sure you want to disconnect your Google Drive sync connection?",
+      )
+    ) {
       clearAuthSession();
       navigate("/");
     }
@@ -202,7 +223,14 @@ export const Synk: React.FC = () => {
           title={HEADINGS.synkBtnBack}
           aria-label={HEADINGS.synkBtnBack}
         >
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <svg
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+          >
             <line x1="19" y1="12" x2="5" y2="12" />
             <polyline points="12 19 5 12 12 5" />
           </svg>
@@ -227,15 +255,24 @@ export const Synk: React.FC = () => {
                 <span className={`badge badge-${syncStatus}`}>
                   {syncStatus === "no_backup" && HEADINGS.synkNoBackupFound}
                   {syncStatus === "in_sync" && HEADINGS.synkStatusUpToDate}
-                  {syncStatus === "local_newer" && HEADINGS.synkStatusLocalNewer}
-                  {syncStatus === "cloud_newer" && HEADINGS.synkStatusCloudNewer}
+                  {syncStatus === "local_newer" &&
+                    HEADINGS.synkStatusLocalNewer}
+                  {syncStatus === "cloud_newer" &&
+                    HEADINGS.synkStatusCloudNewer}
                   {syncStatus === "error" && "Sync Error"}
                 </span>
               </div>
 
               {syncStatus === "error" && (
                 <div className="error-alert">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <circle cx="12" cy="12" r="10" />
                     <line x1="12" y1="8" x2="12" y2="12" />
                     <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -246,7 +283,9 @@ export const Synk: React.FC = () => {
 
               <div className="detail-item">
                 <span className="label">Last Local Modification</span>
-                <span className="value">{formatDateTime(localModifiedTime)}</span>
+                <span className="value">
+                  {formatDateTime(localModifiedTime)}
+                </span>
               </div>
 
               <div className="detail-item">
@@ -257,7 +296,9 @@ export const Synk: React.FC = () => {
               <div className="detail-item">
                 <span className="label">Cloud Backup Modified</span>
                 <span className="value">
-                  {cloudFile ? formatDateTime(new Date(cloudFile.modifiedTime).getTime()) : "Never"}
+                  {cloudFile
+                    ? formatDateTime(new Date(cloudFile.modifiedTime).getTime())
+                    : "Never"}
                 </span>
               </div>
             </div>
@@ -276,7 +317,14 @@ export const Synk: React.FC = () => {
               </>
             ) : (
               <>
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                   <polyline points="17 8 12 3 7 8" />
                   <line x1="12" y1="3" x2="12" y2="15" />
@@ -297,7 +345,14 @@ export const Synk: React.FC = () => {
               </>
             ) : (
               <>
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                   <polyline points="7 10 12 15 17 10" />
                   <line x1="12" y1="15" x2="12" y2="3" />

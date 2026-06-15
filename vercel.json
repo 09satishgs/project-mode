@@ -1,31 +1,31 @@
 {
   "rewrites": [
     {
-      "source": "/project-mode/assets/:path*",
+      "source": "/pokemode/assets/:path*",
       "destination": "/assets/:path*"
     },
     {
-      "source": "/project-mode/favicon.svg",
+      "source": "/pokemode/favicon.svg",
       "destination": "/favicon.svg"
     },
     {
-      "source": "/project-mode/registerSW.js",
+      "source": "/pokemode/registerSW.js",
       "destination": "/registerSW.js"
     },
     {
-      "source": "/project-mode/manifest.webmanifest",
+      "source": "/pokemode/manifest.webmanifest",
       "destination": "/manifest.webmanifest"
     },
     {
-      "source": "/project-mode/sw.js",
+      "source": "/pokemode/sw.js",
       "destination": "/sw.js"
     },
     {
-      "source": "/project-mode/workbox-:hash.js",
+      "source": "/pokemode/workbox-:hash.js",
       "destination": "/workbox-:hash.js"
     },
     {
-      "source": "/project-mode/(.*)",
+      "source": "/pokemode/(.*)",
       "destination": "/index.html"
     }
   ]
