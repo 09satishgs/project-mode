@@ -44,6 +44,7 @@ export const Analyse: React.FC = () => {
     toggleRowExpanded,
     handleSort,
     handleCategorizationChange,
+    handleCycleCategorization,
     handleExportJSON,
     addBlock,
     removeBlock,
@@ -486,24 +487,43 @@ export const Analyse: React.FC = () => {
                               )}
                               {visibleColumns.label && (
                                 <td onClick={(e) => e.stopPropagation()}>
-                                  <select
-                                    value={record.direction}
-                                    onChange={(e) =>
-                                      handleCategorizationChange(
-                                        record,
-                                        e.target.value,
-                                      )
-                                    }
-                                    className={`badge-label-select ${record.direction}`}
-                                  >
-                                    {getSessionOptions(record.sessionId).map(
-                                      (opt) => (
-                                        <option key={opt.value} value={opt.value}>
-                                          {opt.label}
-                                        </option>
-                                      ),
-                                    )}
-                                  </select>
+                                  <div className="categorization-cell-wrapper">
+                                    <select
+                                      value={record.direction}
+                                      onChange={(e) =>
+                                        handleCategorizationChange(
+                                          record,
+                                          e.target.value,
+                                        )
+                                      }
+                                      className={`badge-label-select ${record.direction}`}
+                                    >
+                                      {getSessionOptions(record.sessionId).map(
+                                        (opt) => (
+                                          <option key={opt.value} value={opt.value}>
+                                            {opt.label}
+                                          </option>
+                                        ),
+                                      )}
+                                    </select>
+                                    <button
+                                      className="btn-cycle-categorization"
+                                      onClick={() => handleCycleCategorization(record)}
+                                      title="Cycle categorization"
+                                      aria-label="Cycle categorization"
+                                    >
+                                      <svg
+                                        viewBox="0 0 24 24"
+                                        width="14"
+                                        height="14"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2.5"
+                                      >
+                                        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+                                      </svg>
+                                    </button>
+                                  </div>
                                 </td>
                               )}
                               {visibleColumns.timestamp && (
@@ -588,24 +608,43 @@ export const Analyse: React.FC = () => {
                           {visibleColumns.label && (
                             <div className="card-categorization">
                               <label>Categorization</label>
-                              <select
-                                value={record.direction}
-                                onChange={(e) =>
-                                  handleCategorizationChange(
-                                    record,
-                                    e.target.value,
-                                  )
-                                }
-                                className={`badge-label-select ${record.direction}`}
-                              >
-                                {getSessionOptions(record.sessionId).map(
-                                  (opt) => (
-                                    <option key={opt.value} value={opt.value}>
-                                      {opt.label}
-                                    </option>
-                                  ),
-                                )}
-                              </select>
+                              <div className="categorization-cell-wrapper">
+                                <select
+                                  value={record.direction}
+                                  onChange={(e) =>
+                                    handleCategorizationChange(
+                                      record,
+                                      e.target.value,
+                                    )
+                                  }
+                                  className={`badge-label-select ${record.direction}`}
+                                >
+                                  {getSessionOptions(record.sessionId).map(
+                                    (opt) => (
+                                      <option key={opt.value} value={opt.value}>
+                                        {opt.label}
+                                      </option>
+                                    ),
+                                  )}
+                                </select>
+                                <button
+                                  className="btn-cycle-categorization"
+                                  onClick={() => handleCycleCategorization(record)}
+                                  title="Cycle categorization"
+                                  aria-label="Cycle categorization"
+                                >
+                                  <svg
+                                    viewBox="0 0 24 24"
+                                    width="14"
+                                    height="14"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2.5"
+                                  >
+                                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+                                  </svg>
+                                </button>
+                              </div>
                             </div>
                           )}
                           {visibleColumns.timestamp && (
