@@ -628,6 +628,18 @@ export const useAnalyse = () => {
     }
   };
 
+  const handleCycleCategorization = async (record: JoinedRecord) => {
+    const options = getSessionOptions(record.sessionId);
+    if (options.length <= 1) return;
+
+    const currentIndex = options.findIndex((opt) => opt.value === record.direction);
+    const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % options.length;
+    const nextValue = options[nextIndex].value;
+
+    await handleCategorizationChange(record, nextValue);
+  };
+
+
   const handleExportJSON = (filteredData: JoinedRecord[]) => {
     if (filteredData.length === 0) return;
     try {
@@ -762,6 +774,7 @@ export const useAnalyse = () => {
     toggleRowExpanded,
     handleSort,
     handleCategorizationChange,
+    handleCycleCategorization,
     handleExportJSON,
     addBlock,
     removeBlock,

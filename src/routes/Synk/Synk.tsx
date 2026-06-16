@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { Icon } from "../../components/Icon/Icon";
 import {
   getStoredAuthSession,
   clearAuthSession,
@@ -223,17 +224,7 @@ export const Synk: React.FC = () => {
           title={HEADINGS.synkBtnBack}
           aria-label={HEADINGS.synkBtnBack}
         >
-          <svg
-            viewBox="0 0 24 24"
-            width="20"
-            height="20"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-          >
-            <line x1="19" y1="12" x2="5" y2="12" />
-            <polyline points="12 19 5 12 12 5" />
-          </svg>
+          <Icon name="arrow-left" size={20} />
         </button>
         <h1>{HEADINGS.synkTitle}</h1>
         <p className="subtitle">{HEADINGS.synkSubtitle}</p>
@@ -265,18 +256,7 @@ export const Synk: React.FC = () => {
 
               {syncStatus === "error" && (
                 <div className="error-alert">
-                  <svg
-                    viewBox="0 0 24 24"
-                    width="16"
-                    height="16"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <line x1="12" y1="8" x2="12" y2="12" />
-                    <line x1="12" y1="16" x2="12.01" y2="16" />
-                  </svg>
+                  <Icon name="alert" size={16} strokeWidth={2} />
                   <span>{errorMsg}</span>
                 </div>
               )}
@@ -317,18 +297,7 @@ export const Synk: React.FC = () => {
               </>
             ) : (
               <>
-                <svg
-                  viewBox="0 0 24 24"
-                  width="18"
-                  height="18"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="17 8 12 3 7 8" />
-                  <line x1="12" y1="3" x2="12" y2="15" />
-                </svg>
+                <Icon name="upload" size={18} />
                 {HEADINGS.synkBtnPush}
               </>
             )}
@@ -345,18 +314,7 @@ export const Synk: React.FC = () => {
               </>
             ) : (
               <>
-                <svg
-                  viewBox="0 0 24 24"
-                  width="18"
-                  height="18"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="7 10 12 15 17 10" />
-                  <line x1="12" y1="15" x2="12" y2="3" />
-                </svg>
+                <Icon name="export" size={18} />
                 {HEADINGS.synkBtnPull}
               </>
             )}

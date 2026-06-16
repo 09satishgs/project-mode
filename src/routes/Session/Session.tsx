@@ -1,4 +1,5 @@
 import React from "react";
+import { Icon } from "../../components/Icon/Icon";
 import { motion } from "framer-motion";
 import ProgressBar from "../../components/ProgressBar/ProgressBar";
 import SwipeCard from "../../components/SwipeCard/SwipeCard";
@@ -149,17 +150,7 @@ export const Session: React.FC = () => {
                 onClick={triggerLeftButton}
                 aria-label={session.swipeLeftLabel}
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  width="20"
-                  height="20"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                >
-                  <path d="M19 12H5" />
-                  <polyline points="12 19 5 12 12 5" />
-                </svg>
+                <Icon name="arrow-left" size={20} />
                 <span>{session.swipeLeftLabel}</span>
               </button>
 
@@ -169,17 +160,7 @@ export const Session: React.FC = () => {
                   onClick={triggerUpButton}
                   aria-label={session.swipeUpLabel}
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    width="20"
-                    height="20"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                  >
-                    <line x1="12" y1="19" x2="12" y2="5" />
-                    <polyline points="5 12 12 5 19 12" />
-                  </svg>
+                  <Icon name="arrow-up" size={20} />
                   <span>{session.swipeUpLabel}</span>
                 </button>
               )}
@@ -190,16 +171,7 @@ export const Session: React.FC = () => {
                   onClick={triggerDoubleClickButton}
                   aria-label={session.doubleClickLabel}
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    width="20"
-                    height="20"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                  >
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                  </svg>
+                  <Icon name="heart" size={20} />
                   <span>{session.doubleClickLabel}</span>
                 </button>
               )}
@@ -210,17 +182,7 @@ export const Session: React.FC = () => {
                   onClick={triggerDownButton}
                   aria-label={session.swipeDownLabel}
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    width="20"
-                    height="20"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                  >
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <polyline points="19 12 12 19 5 12" />
-                  </svg>
+                  <Icon name="arrow-down" size={20} />
                   <span>{session.swipeDownLabel}</span>
                 </button>
               )}
@@ -231,17 +193,7 @@ export const Session: React.FC = () => {
                 aria-label={session.swipeRightLabel}
               >
                 <span>{session.swipeRightLabel}</span>
-                <svg
-                  viewBox="0 0 24 24"
-                  width="20"
-                  height="20"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                >
-                  <path d="M5 12h14" />
-                  <polyline points="12 5 19 12 12 19" />
-                </svg>
+                <Icon name="arrow-right" size={20} />
               </button>
             </div>
           </>
