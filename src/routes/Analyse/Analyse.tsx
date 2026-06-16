@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { Icon } from "../../components/Icon/Icon";
 import JsonTreeView from "../../components/JsonTreeView/JsonTreeView";
 import MobileSheet from "../../components/MobileSheet/MobileSheet";
 import { formatTime } from "../../utils/helpers";
@@ -75,16 +76,7 @@ export const Analyse: React.FC = () => {
           onClick={() => navigate("/")}
           aria-label="Back to dashboard"
         >
-          <svg
-            viewBox="0 0 24 24"
-            width="20"
-            height="20"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-          >
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
+          <Icon name="chevron-left" size={20} />
         </button>
         <h1>{HEADINGS.analyseTitle}</h1>
         <div className="spacer"></div>
@@ -112,28 +104,9 @@ export const Analyse: React.FC = () => {
         >
           <span className="icon">
             {isFiltersOpen ? (
-              <svg
-                viewBox="0 0 24 24"
-                width="20"
-                height="20"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
+              <Icon name="close" size={20} />
             ) : (
-              <svg
-                viewBox="0 0 24 24"
-                width="20"
-                height="20"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-              </svg>
+              <Icon name="filter" size={20} />
             )}
           </span>
           <span className="label-text">{HEADINGS.analyseLabelHideDetails}</span>
@@ -155,31 +128,9 @@ export const Analyse: React.FC = () => {
         >
           <span className="icon">
             {showQueryBuilder ? (
-              <svg
-                viewBox="0 0 24 24"
-                width="20"
-                height="20"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
+              <Icon name="close" size={20} />
             ) : (
-              <svg
-                viewBox="0 0 24 24"
-                width="20"
-                height="20"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <rect x="3" y="3" width="7" height="9" />
-                <rect x="14" y="3" width="7" height="5" />
-                <rect x="14" y="12" width="7" height="9" />
-                <rect x="3" y="16" width="7" height="5" />
-              </svg>
+              <Icon name="query-builder" size={20} />
             )}
           </span>
           <span className="label-text">Close Query Builder</span>
@@ -248,35 +199,12 @@ export const Analyse: React.FC = () => {
                   >
                     {viewMode === "table" ? (
                       <>
-                        <svg
-                          viewBox="0 0 24 24"
-                          width="16"
-                          height="16"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2.5"
-                          style={{ marginRight: "6px" }}
-                        >
-                          <rect x="3" y="3" width="7" height="9" />
-                          <rect x="14" y="3" width="7" height="5" />
-                          <rect x="14" y="12" width="7" height="9" />
-                          <rect x="3" y="16" width="7" height="5" />
-                        </svg>
+                        <Icon name="query-builder" size={16} style={{ marginRight: "6px" }} />
                         {HEADINGS.analyseBtnListView}
                       </>
                     ) : (
                       <>
-                        <svg
-                          viewBox="0 0 24 24"
-                          width="16"
-                          height="16"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2.5"
-                          style={{ marginRight: "6px" }}
-                        >
-                          <path d="M3 3h18v18H3zM21 9H3M21 15H3M12 3v18" />
-                        </svg>
+                        <Icon name="table" size={16} style={{ marginRight: "6px" }} />
                         {HEADINGS.analyseBtnTableView}
                       </>
                     )}
@@ -288,17 +216,7 @@ export const Analyse: React.FC = () => {
                       className={`btn-secondary columns-btn ${showColumnDropdown ? "active" : ""}`}
                       onClick={() => setShowColumnDropdown(!showColumnDropdown)}
                     >
-                      <svg
-                        viewBox="0 0 24 24"
-                        width="16"
-                        height="16"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                        style={{ marginRight: "6px" }}
-                      >
-                        <path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18" />
-                      </svg>
+                      <Icon name="columns" size={16} style={{ marginRight: "6px" }} />
                       {HEADINGS.analyseBtnColumns}
                     </button>
                     {showColumnDropdown && (
@@ -342,19 +260,7 @@ export const Analyse: React.FC = () => {
                     className="btn-secondary export-btn"
                     onClick={() => handleExportJSON(filtered)}
                   >
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="16"
-                      height="16"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      style={{ marginRight: "6px" }}
-                    >
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                      <polyline points="7 10 12 15 17 10" />
-                      <line x1="12" y1="15" x2="12" y2="3" />
-                    </svg>
+                    <Icon name="export" size={16} style={{ marginRight: "6px" }} />
                     {HEADINGS.analyseBtnExport}
                   </button>
                 </div>
@@ -449,17 +355,11 @@ export const Analyse: React.FC = () => {
                                     toggleRowExpanded(record.id);
                                   }}
                                 >
-                                  <svg
-                                    viewBox="0 0 24 24"
-                                    width="16"
-                                    height="16"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2.5"
+                                  <Icon
+                                    name="chevron-down"
+                                    size={16}
                                     className={`chevron-icon ${isRowExpanded ? "expanded" : ""}`}
-                                  >
-                                    <polyline points="6 9 12 15 18 9" />
-                                  </svg>
+                                  />
                                 </button>
                               </td>
                               {visibleColumns.snapshot && (
@@ -512,16 +412,7 @@ export const Analyse: React.FC = () => {
                                       title="Cycle categorization"
                                       aria-label="Cycle categorization"
                                     >
-                                      <svg
-                                        viewBox="0 0 24 24"
-                                        width="14"
-                                        height="14"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2.5"
-                                      >
-                                        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
-                                      </svg>
+                                      <Icon name="cycle" size={14} />
                                     </button>
                                   </div>
                                 </td>
@@ -633,16 +524,7 @@ export const Analyse: React.FC = () => {
                                   title="Cycle categorization"
                                   aria-label="Cycle categorization"
                                 >
-                                  <svg
-                                    viewBox="0 0 24 24"
-                                    width="14"
-                                    height="14"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2.5"
-                                  >
-                                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
-                                  </svg>
+                                  <Icon name="cycle" size={14} />
                                 </button>
                               </div>
                             </div>
@@ -661,16 +543,7 @@ export const Analyse: React.FC = () => {
                             onClick={() => toggleRowExpanded(record.id)}
                             aria-label="View Details"
                           >
-                            <svg
-                              viewBox="0 0 24 24"
-                              width="18"
-                              height="18"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2.5"
-                            >
-                              <polyline points="9 18 15 12 9 6" />
-                            </svg>
+                            <Icon name="chevron-right" size={18} />
                           </button>
                         )}
 
@@ -684,17 +557,7 @@ export const Analyse: React.FC = () => {
                                   onClick={() => toggleRowExpanded(record.id)}
                                   aria-label="Close Details"
                                 >
-                                  <svg
-                                    viewBox="0 0 24 24"
-                                    width="16"
-                                    height="16"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2.5"
-                                  >
-                                    <line x1="18" y1="6" x2="6" y2="18" />
-                                    <line x1="6" y1="6" x2="18" y2="18" />
-                                  </svg>
+                                  <Icon name="close" size={16} />
                                 </button>
                               </div>
                               <div className="json-tree-wrapper">

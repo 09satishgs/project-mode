@@ -1,4 +1,5 @@
 import React from "react";
+import { Icon } from "../../components/Icon/Icon";
 import { NewSessionModal } from "../../components/NewSessionModal/NewSessionModal";
 import { HEADINGS } from "../../constants/headings";
 import { getDexDisplayName, formatDate } from "../../utils/helpers";
@@ -29,17 +30,7 @@ export const Dashboard: React.FC = () => {
         title="Database Synchronization"
         aria-label="Database Synchronization"
       >
-        <svg
-          viewBox="0 0 24 24"
-          width="18"
-          height="18"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-        >
-          <path d="M23 4v6h-6M1 20v-6h6" />
-          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-        </svg>
+        <Icon name="sync" size={18} />
         {!isSyncLoggedIn && <span className="exclamation-badge">!</span>}
       </button>
 
@@ -77,17 +68,7 @@ export const Dashboard: React.FC = () => {
                       onClick={(e) => handleDeleteSession(e, session.id)}
                       title={HEADINGS.tooltipDelete}
                     >
-                      <svg
-                        viewBox="0 0 24 24"
-                        width="16"
-                        height="16"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                      </svg>
+                      <Icon name="trash" size={16} strokeWidth={2} />
                     </button>
                   </div>
                   <div className="card-meta">
@@ -129,18 +110,7 @@ export const Dashboard: React.FC = () => {
               title={HEADINGS.tooltipUpload}
               aria-label={HEADINGS.tooltipUpload}
             >
-              <svg
-                viewBox="0 0 24 24"
-                width="16"
-                height="16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="17 8 12 3 7 8" />
-                <line x1="12" y1="3" x2="12" y2="15" />
-              </svg>
+              <Icon name="upload" size={16} />
             </button>
             <input
               type="file"
@@ -169,17 +139,7 @@ export const Dashboard: React.FC = () => {
                       onClick={(e) => handleDeleteSession(e, session.id)}
                       title={HEADINGS.tooltipDelete}
                     >
-                      <svg
-                        viewBox="0 0 24 24"
-                        width="16"
-                        height="16"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                      </svg>
+                      <Icon name="trash" size={16} strokeWidth={2} />
                     </button>
                   </div>
                   <div className="card-meta">
@@ -208,37 +168,14 @@ export const Dashboard: React.FC = () => {
           className="btn-secondary analyse-btn"
           onClick={() => navigate("/analyse")}
         >
-          <svg
-            viewBox="0 0 24 24"
-            width="18"
-            height="18"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            style={{ marginRight: "6px" }}
-          >
-            <line x1="18" y1="20" x2="18" y2="10" />
-            <line x1="12" y1="20" x2="12" y2="4" />
-            <line x1="6" y1="20" x2="6" y2="14" />
-          </svg>
+          <Icon name="analyse" size={18} style={{ marginRight: "6px" }} />
           {HEADINGS.btnAnalyse}
         </button>
         <button
           className="btn-primary start-new-btn"
           onClick={() => setIsModalOpen(true)}
         >
-          <svg
-            viewBox="0 0 24 24"
-            width="18"
-            height="18"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            style={{ marginRight: "6px" }}
-          >
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
+          <Icon name="plus" size={18} style={{ marginRight: "6px" }} />
           {HEADINGS.btnNew}
         </button>
       </div>
